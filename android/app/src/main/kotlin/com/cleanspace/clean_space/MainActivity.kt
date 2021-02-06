@@ -1,4 +1,4 @@
-package com.cleanspace.clean_space
+package com.cleanspace.app
 
 import io.flutter.embedding.android.FlutterActivity
 

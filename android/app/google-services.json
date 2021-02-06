@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "503078214224",
+    "project_id": "cleanspace-e6c3d",
+    "storage_bucket": "cleanspace-e6c3d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:503078214224:android:f8ad1d400cf647235b0f55",
+        "android_client_info": {
+          "package_name": "com.cleanspace.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "503078214224-0qre28lkbsuk5na08ph0kvvmbqo0v89n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQ9PoYPYH1uT4Mz_FIzUEP6yxqY4w9g-s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "503078214224-0qre28lkbsuk5na08ph0kvvmbqo0v89n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
