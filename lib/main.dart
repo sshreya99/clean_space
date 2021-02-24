@@ -1,7 +1,15 @@
-import 'package:clean_space/ui/views/startup/welcome_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:clean_space/app/locator.dart';
+import 'package:clean_space/app/router.gr.dart';
+import 'package:clean_space/ui/utils/setup_dialog_ui.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart' hide Router;
+import 'package:stacked_services/stacked_services.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  setupLocator();
+  setupDialogUi();
   runApp(MyApp());
 }
 
@@ -10,21 +18,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: WelcomeScreen(),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Home Screen"),
-      ),
-      body: Center(
-        child: Text("Welcome to Home Screen!"),
-      ),
+      initialRoute: Routes.welcomeScreen,
+      onGenerateRoute: Router().onGenerateRoute,
+      navigatorKey: StackedService.navigatorKey,
     );
   }
 }
