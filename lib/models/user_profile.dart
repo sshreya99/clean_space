@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show required;
 import 'package:json_annotation/json_annotation.dart';
 part "user_profile.g.dart";
 

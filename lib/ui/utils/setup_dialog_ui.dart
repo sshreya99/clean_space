@@ -1,8 +1,8 @@
-import 'package:clean_space/app/locator.dart';
-import 'package:clean_space/ui/utils/theme_colors.dart';
-import 'package:clean_space/utils/constants/assets/image_assets.dart';
-import 'package:clean_space/utils/enums/dialog_type.dart';
-import 'package:flutter/material.dart';
+import 'package:clean_space/app/locator.dart' show locator;
+import 'package:clean_space/ui/utils/theme_colors.dart' show ThemeColors;
+import 'package:clean_space/utils/constants/assets/image_assets.dart' show ImageAssets;
+import 'package:clean_space/utils/enums/dialog_type.dart' show DialogType;
+import 'package:flutter/material.dart' show AlertDialog, BuildContext, Colors, Column, FlatButton, Image, Key, MainAxisSize, Navigator, SizedBox, StatelessWidget, Text, TextStyle, Widget;
 import 'package:stacked_services/stacked_services.dart';
 
 void setupDialogUi() {
