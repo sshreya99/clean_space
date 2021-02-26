@@ -30,7 +30,7 @@ class WelcomeScreen extends StatelessWidget {
               SizedBox(height: size.height * 0.05),
               RoundedButton(
                 text: "LOGIN",
-                press: () {
+                onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -45,7 +45,7 @@ class WelcomeScreen extends StatelessWidget {
                 text: "SIGN UP",
                 color: kPrimaryLightColor,
                 textColor: Colors.black,
-                press: () {
+                onPressed: () {
                   //  TODO: implement sign up logic
                   Navigator.push(
                     context,

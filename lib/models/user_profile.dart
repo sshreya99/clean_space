@@ -7,22 +7,21 @@ class UserProfile {
   @JsonKey(ignore: true)
   String uid;
   String fullName;
+  String username;
   String email;
   String phone;
-  String city;
-  String department;
   String avatarUrl;
   DateTime createdAt;
   DateTime updatedAt;
 
   UserProfile(
       {this.uid,
-      @required this.fullName,
+      this.fullName,
+      @required this.username,
       @required this.email,
       this.phone,
-      this.city,
+      this.avatarUrl,
       this.createdAt,
-      this.department,
       this.updatedAt});
 
   factory UserProfile.fromJson(Map<String, dynamic> json) =>
