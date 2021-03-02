@@ -5,7 +5,7 @@ import 'package:clean_space/ui/views/startup/welcome_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
-  AuthenticationService _authenticationService =
+  final AuthenticationService _authenticationService =
       locator<AuthenticationService>();
 
   @override
