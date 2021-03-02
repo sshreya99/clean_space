@@ -106,7 +106,7 @@ class _BodyState extends State<Body> {
                         },
                         cursorColor: kPrimaryColor,
                         decoration: InputDecoration(
-                          hintText: "Phone",h
+                          hintText: "Phone",
                           border: InputBorder.none,
                         ),
                       ),
