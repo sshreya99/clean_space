@@ -58,7 +58,7 @@ class HomeScreen extends StatelessWidget {
             builder: (context, snapshot) {
               if (snapshot.hasData)
                 return Text(
-                    "${snapshot.data.email} : ${snapshot.data.createdAt}");
+                    "${snapshot.data.email} : ${snapshot.data.username}");
               return CircularProgressIndicator();
             }),
       ),
