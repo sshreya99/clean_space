@@ -82,7 +82,7 @@ class UserProfileService {
   }
 
   Future<void> deleteAvatarImage(String imageUrl) async {
-    // TODO: check for required error handling
+    // TODO: check for required error handling//
     Reference photoRef = _firebaseStorage.refFromURL(imageUrl);
     await photoRef.delete();
   }
