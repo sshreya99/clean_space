@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:social_media_photographers/profil.dart';
 
 class SocialMedia extends StatelessWidget {
   @override
