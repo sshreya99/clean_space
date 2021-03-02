@@ -106,8 +106,8 @@ class _BodyState extends State<Body> {
                         },
                         cursorColor: kPrimaryColor,
                         decoration: InputDecoration(
-                          hintText: "Phone",h
-                          border: InputBorder.none,
+                          hintText: "Phone",
+                          
                         ),
                       ),
                     ),
@@ -185,12 +185,9 @@ class _BodyState extends State<Body> {
                       try {
                         await _authenticationService.signUpWithEmailAndPassword(
                             userProfile, _passwordController.text);
-                        Navigator.pushAndRemoveUntil(
+                        Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => HomeScreen(),
-                          ),
-                          (_) => false,
+                          MaterialPageRoute(builder: (context) => HomeScreen()),
                         );
                       } on Failure catch (e) {
                         // 5. if error -> show error message
