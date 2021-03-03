@@ -21,7 +21,7 @@ class UserProfileService {
   Future<UserProfile> getUserProfile(String uid) async {
     try {
       final snapshot = await _userProfiles.doc(uid).get();
-      return UserProfile.fromJson(snapshot.data())..uid = uid;
+      return UserProfile.fromMap(snapshot.data(), uid);
     } on FirebaseException catch (e) {
       print("A firebase exception has occured: $e");
       throw Failure(message: e.message);
@@ -39,10 +39,7 @@ class UserProfileService {
   Future<bool> updateUserProfile(UserProfile userProfile) async {
     try {
       userProfile.updatedAt = DateTime.now();
-      await _userProfiles
-          .doc(userProfile.uid)
-          .set(userProfile.toJson())
-          .timeout(
+      await _userProfiles.doc(userProfile.uid).set(userProfile.toMap()).timeout(
             Duration(seconds: 15),
             onTimeout: () => throw Failure(message: "Retry, timeout exceeded!"),
           );
