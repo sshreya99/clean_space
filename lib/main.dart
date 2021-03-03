@@ -4,6 +4,7 @@ import 'package:clean_space/ui/utils/setup_dialog_ui.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart' hide Router;
 import 'package:stacked_services/stacked_services.dart';
+import 'package:clean_space/Screens/Home_screen/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
