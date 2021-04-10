@@ -128,11 +128,11 @@ class _BodyState extends State<Body> {
                                 // 5. if error -> show error message
                                 showDialog(
                                   context: context,
-                                  child: AlertDialog(
+                                  builder: (_) => AlertDialog(
                                     title: Text("Error Occurred!"),
                                     content: Text(e.message),
                                     actions: [
-                                      FlatButton(
+                                      TextButton(
                                         onPressed: () {
                                           Navigator.pop(context);
                                         },

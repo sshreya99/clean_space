@@ -39,7 +39,7 @@ class _ErrorDialog extends StatelessWidget {
         ],
       ),
       actions: [
-        FlatButton(
+        TextButton(
           // color: Colors.deepPurpleAccent,
           onPressed: () => Navigator.pop(context),
           child: Text(

@@ -21,17 +21,17 @@ class HomeScreen extends StatelessWidget {
               // logout
               showDialog(
                 context: context,
-                child: AlertDialog(
+                builder: (_) => AlertDialog(
                   title: Text("Logout"),
                   content: Text("Are you sure you want to logout?"),
                   actions: [
-                    FlatButton(
+                    TextButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
                       child: Text("Cancel"),
                     ),
-                    FlatButton(
+                    TextButton(
                       onPressed: () async {
                         //  logout
                         await _authenticationService.signOut();
