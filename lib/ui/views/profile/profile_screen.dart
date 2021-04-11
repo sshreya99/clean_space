@@ -91,7 +91,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       ),
                       AppBar(
                         elevation: 0,
-                        leading: BackButton(),
+                        automaticallyImplyLeading: false,
                         backgroundColor: Colors.transparent,
                         actions: [
                           IconButton(

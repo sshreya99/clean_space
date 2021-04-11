@@ -1,12 +1,15 @@
 import 'package:clean_space/services/image_services.dart';
 import 'package:flutter/material.dart';
+import 'package:clean_space/app/router.gr.dart';
 
 class PostView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.keyboard_arrow_left, color: Colors.black,),
+        leading: IconButton(icon: Icon(Icons.keyboard_arrow_left, color: Colors.black,), onPressed: (){
+          Navigator.pushReplacementNamed(context, Routes.homeScreen);
+        },),
         title: Text(
           "Add Post",
           style: TextStyle(color: Colors.black),
@@ -41,13 +44,14 @@ class PostView extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
                     onTap: () async {
                       await ImageService.openCameraForImage();
                     },
                     child: Container(
-                      width: 180,
+                      width: 150,
                       height: 40,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -76,7 +80,7 @@ class PostView extends StatelessWidget {
                               'Open Camera',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 20,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -85,13 +89,12 @@ class PostView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(width: 30,),
                   GestureDetector(
                     onTap: () async {
                       await ImageService.openGalleryForImage();
                     },
                     child: Container(
-                      width: 180,
+                      width: 150,
                       height: 40,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -121,7 +124,7 @@ class PostView extends StatelessWidget {
                                 'Open Gallery',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 20,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -165,4 +168,5 @@ class PostView extends StatelessWidget {
       ),
     );
   }
+
 }

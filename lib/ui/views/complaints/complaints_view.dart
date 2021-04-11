@@ -1,14 +1,29 @@
+import 'package:clean_space/ui/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:clean_space/services/image_services.dart';
+import 'package:clean_space/app/router.gr.dart';
 
-import 'package:clean_space/app/locator.dart';
+class ComplaintsView extends StatefulWidget {
+  @override
+  _ComplaintsViewState createState() => _ComplaintsViewState();
+}
 
-class ComplaintsView extends StatelessWidget {
+class _ComplaintsViewState extends State<ComplaintsView> {
+  int _currentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.keyboard_arrow_left, color: Colors.black,),
+        leading: IconButton(
+          icon: Icon(
+            Icons.keyboard_arrow_left,
+            color: Colors.black,
+          ),
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, Routes.homeScreen);
+          },
+        ),
         title: Text(
           "Add Complaint",
           style: TextStyle(color: Colors.black),
@@ -43,13 +58,14 @@ class ComplaintsView extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
                     onTap: () async {
                       await ImageService.openCameraForImage();
                     },
                     child: Container(
-                      width: 180,
+                      width: 150,
                       height: 40,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -59,8 +75,7 @@ class ComplaintsView extends StatelessWidget {
                             ],
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight),
-                        borderRadius
-                            : BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black12,
@@ -73,12 +88,15 @@ class ComplaintsView extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Icon(Icons.camera_alt, color: Colors.white,),
+                            Icon(
+                              Icons.camera_alt,
+                              color: Colors.white,
+                            ),
                             Text(
                               'Open Camera',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 20,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -87,13 +105,12 @@ class ComplaintsView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(width: 30,),
                   GestureDetector(
                     onTap: () async {
                       await ImageService.openGalleryForImage();
                     },
                     child: Container(
-                      width: 180,
+                      width: 150,
                       height: 40,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -118,12 +135,15 @@ class ComplaintsView extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Icon(Icons.image, color: Colors.white,),
+                              Icon(
+                                Icons.image,
+                                color: Colors.white,
+                              ),
                               Text(
                                 'Open Gallery',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 20,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -140,26 +160,49 @@ class ComplaintsView extends StatelessWidget {
               title: Row(
                 children: [
                   Icon(Icons.apps),
-                  SizedBox(width: 20,),
-                  Text("Select Category", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Text(
+                    "Select Category",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                 ],
               ),
-              children: [
-                Align(alignment: Alignment.centerLeft,child: Text("Category 1", style: TextStyle(fontSize: 18,),)),
-                Align(alignment: Alignment.centerLeft, child: Text("Category 2", style: TextStyle(fontSize: 18,),)),
-              ],
+              children: Constants.complaintCategory
+                  .map((String choice) => Text(choice))
+                  .toList(),
             ),
             ExpansionTile(
               title: Row(
                 children: [
                   Icon(Icons.location_on),
-                  SizedBox(width: 20,),
-                  Text("Add Place", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Text(
+                    "Add Place",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                 ],
               ),
               children: [
-                Align(alignment: Alignment.centerLeft,child: Text("Home", style: TextStyle(fontSize: 18,),)),
-                Align(alignment: Alignment.centerLeft, child: Text("Work", style: TextStyle(fontSize: 18,),)),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Home",
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    )),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Work",
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    )),
               ],
             ),
           ],
@@ -167,4 +210,27 @@ class ComplaintsView extends StatelessWidget {
       ),
     );
   }
+
+  Widget buildNavBarItem(IconData icon, int index) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width / 5,
+        height: 45,
+        child: icon != null
+            ? Icon(
+                icon,
+                size: 25,
+                color: index == _currentIndex ? Colors.black : Colors.grey[700],
+              )
+            : Container(),
+      ),
+    );
+  }
+
+  void postComplaint() {}
 }
