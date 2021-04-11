@@ -11,9 +11,9 @@ abstract class ComplaintsServiceBase {
 
   Stream<List<Complaint>> getAllComplaintsOf(UserProfile complaint);
 
-  Stream<List<Complaint>> getComplaintsByArea(Area area);
+  Stream<List<Complaint>> getComplaintsByArea(Location area);
 
-  Future<int> getComplaintsByAreaCount(Area area);
+  Future<int> getComplaintsByAreaCount(Location area);
 
   Future<Complaint> getComplaint(id);
 
@@ -62,13 +62,13 @@ class ComplaintsService implements ComplaintsServiceBase{
   }
 
   @override
-  Stream<List<Complaint>> getComplaintsByArea(Area area) {
+  Stream<List<Complaint>> getComplaintsByArea(Location area) {
     // TODO: implement getComplaintsByArea
     throw UnimplementedError();
   }
 
   @override
-  Future<int> getComplaintsByAreaCount(Area area) {
+  Future<int> getComplaintsByAreaCount(Location area) {
     // TODO: implement getComplaintsByAreaCount
     throw UnimplementedError();
   }

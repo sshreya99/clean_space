@@ -16,6 +16,7 @@ class FeedItem extends StatelessWidget {
                 subtitle: Text("Manjalpur"),
                 trailing: IconButton(
                   icon: Icon(Icons.menu_rounded),
+                  onPressed: (){},
                 ),
               ),
               Container(height: 100, width: 200, child: Placeholder()),
@@ -35,6 +36,7 @@ class FeedItem extends StatelessWidget {
                     ],
                   ),
                   IconButton(
+                    onPressed: (){},
                     icon: Icon(Icons.share),
                   ),
                   Text("Apr 24"),

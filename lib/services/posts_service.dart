@@ -10,8 +10,8 @@ import 'package:firebase_core/firebase_core.dart';
 abstract class PostsServiceBase{
   Stream<List<Post>> getAllPosts();
   Stream<List<Post>> getAllPostsOf(UserProfile user);
-  Stream<Post> getPostsByArea(Area area);
-  Future<int> getPostsByAreaCount(Area area);
+  Stream<Post> getPostsByArea(Location area);
+  Future<int> getPostsByAreaCount(Location area);
   Future<Post> getPost(id);
 
   Future<void> createPost(Post post);
@@ -55,13 +55,13 @@ class PostsService implements PostsServiceBase{
   }
 
   @override
-  Stream<Post> getPostsByArea(Area area) {
+  Stream<Post> getPostsByArea(Location area) {
     // TODO: implement getPostsByArea
     throw UnimplementedError();
   }
 
   @override
-  Future<int> getPostsByAreaCount(Area area) {
+  Future<int> getPostsByAreaCount(Location area) {
     // TODO: implement getPostsByAreaCount
     throw UnimplementedError();
   }

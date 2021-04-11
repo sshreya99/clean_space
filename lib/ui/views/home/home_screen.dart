@@ -2,9 +2,7 @@ import 'package:clean_space/app/locator.dart';
 import 'package:clean_space/app/router.gr.dart';
 import 'package:clean_space/models/user_profile.dart';
 import 'package:clean_space/services/authentication_service.dart';
-import 'package:clean_space/ui/views/startup/startup_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:clean_space/ui/views/home/profil.dart';
 
 class HomeScreen extends StatelessWidget {
   final AuthenticationService _authenticationService =

@@ -6,14 +6,14 @@ class RankService{
   PostsServiceBase _postsService;
   ComplaintsServiceBase _complaintsService;
 
-  Future<int> calculatePointsOfArea(Area area) async {
+  Future<int> calculatePointsOfArea(Location area) async {
     int numberOfAppreciation = await _postsService.getPostsByAreaCount(area);
     int numberOfComplaints = await _complaintsService.getComplaintsByAreaCount(area);
 
     return numberOfAppreciation - numberOfComplaints;
   }
 
-  Future<List<Area>> sortAreasByRank(List<Area> areas) async {
+  Future<List<Location>> sortAreasByRank(List<Location> areas) async {
      areas.forEach((area) async {
       area..point = await calculatePointsOfArea(area);
     });
