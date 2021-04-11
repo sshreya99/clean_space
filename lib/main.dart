@@ -6,8 +6,6 @@ import 'package:clean_space/ui/views/auth/forgot_password_send_verification_scre
 import 'package:clean_space/ui/views/auth/reset_new_password_screen.dart';
 import 'package:clean_space/ui/views/profile/profile_screen.dart';
 import 'package:clean_space/ui/views/profile/settings_screen.dart';
-import 'file:///E:/Projects/in_progress/cleanspace/app/clean_space/lib/ui/views/auth/signup_screen.dart';
-import 'file:///E:/Projects/in_progress/cleanspace/app/clean_space/lib/ui/views/auth/signin_screen.dart';
 import 'package:clean_space/ui/views/startup/on_boarding_screen.dart';
 import 'package:clean_space/ui/views/startup/splash_screen.dart';
 import 'package:clean_space/ui/views/startup/startup_screen.dart';

@@ -430,7 +430,7 @@ packages:
     source: hosted
     version: "0.16.1"
   introduction_screen:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: introduction_screen
       url: "https://pub.dartlang.org"

@@ -20,6 +20,7 @@ dependencies:
   get_it: ^5.0.6
   google_fonts: 0.3.10
   image_picker:
+
   json_annotation: ^3.1.1
   shared_preferences: 0.5.7+3
   stacked: ^1.7.7

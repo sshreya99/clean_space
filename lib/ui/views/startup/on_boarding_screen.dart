@@ -80,7 +80,7 @@ class OnBoardingScreen extends StatelessWidget {
         ),
       ],
       onDone: () {
-        Navigator.pushReplacementNamed(context, Routes.signinScreen);
+        Navigator.pushReplacementNamed(context, Routes.loginScreen);
       },
       showSkipButton: true,
       skip: const Text("Skip", style: TextStyle(color: Colors.white)),

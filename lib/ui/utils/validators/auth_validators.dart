@@ -22,10 +22,12 @@ class AuthValidators {
   }
 
   static String validatePhone(String value) {
-    if (value.length != 10) {
-      return "Phone is should be exactly of 10 digits!";
-    } else if (!value.isNumeric) {
-      return "Phone is not valid!";
+    if(value.isNotEmpty){
+      if (value.length != 10) {
+        return "Phone is should be exactly of 10 digits!";
+      } else if (!value.isNumeric) {
+        return "Phone is not valid!";
+      }
     }
     return null;
   }

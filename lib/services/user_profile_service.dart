@@ -32,6 +32,32 @@ class UserProfileService {
     }
   }
 
+  Future<bool> isUsernameAlreadyTaken(String userName)async{
+    userName = userName.trim().toLowerCase();
+
+    //! Warning: to just count the number we should not perform below operation -
+    // each document "costs" one read. However, we will only get either 0 or 1 for the query so
+    // no worries for this function. ref: https://stackoverflow.com/questions/46554091/cloud-firestore-collection-count
+    final querySnapshot =  await _firebaseFireStore.collection(FireStoreCollections.userProfiles).where("username",isEqualTo: userName).get();
+    return querySnapshot.size != 0;
+  }
+
+  Future<String> getEmailFromUsername(String userName)async{
+    userName = userName.trim().toLowerCase();
+
+    final querySnapshot =  await _firebaseFireStore.collection(FireStoreCollections.userProfiles).where("username",isEqualTo: userName).get();
+    if(querySnapshot.size == 0){
+      throw Failure(message: "No user found for the given username!");
+    }
+
+    if(querySnapshot.size != 1){
+      throw Failure(message: "Multiple users found for the given username!");
+    }
+
+    UserProfile userProfile = UserProfile.fromMap(querySnapshot.docs.first.data(), querySnapshot.docs.first.id);
+    return userProfile.email;
+  }
+
   /// [createUserProfile] has same functionality as [updateUserProfile].
   Future<bool> createUserProfile(UserProfile userProfile) =>
       updateUserProfile(userProfile..createdAt = DateTime.now());

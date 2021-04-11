@@ -9,6 +9,9 @@ class CustomTextFormField extends StatelessWidget {
   final Color textColor;
   final bool obscureText;
   final Widget suffixIcon;
+  final TextInputType keyboardType;
+  final void Function(String) onChanged;
+  final int maxLength;
 
   const CustomTextFormField({
     this.icon,
@@ -16,7 +19,7 @@ class CustomTextFormField extends StatelessWidget {
     this.controller,
     this.enabled = true,
     this.validator,
-    this.textColor, this.obscureText = false, this.suffixIcon,
+    this.textColor, this.obscureText = false, this.suffixIcon, this.keyboardType, this.onChanged, this.maxLength,
   });
 
   @override
@@ -35,7 +38,9 @@ class CustomTextFormField extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: TextFormField(
-        autovalidateMode: AutovalidateMode.onUserInteraction,
+        // autovalidateMode: AutovalidateMode.onUserInteraction,
+        maxLength: maxLength,
+        onChanged: onChanged,
         enabled: enabled,
         validator: validator,
         obscureText: obscureText,
@@ -44,8 +49,10 @@ class CustomTextFormField extends StatelessWidget {
         ),
         controller: controller,
         readOnly: !enabled,
+    keyboardType: keyboardType,
 
         decoration: InputDecoration(
+counterText: "",
           suffixIcon: suffixIcon,
           prefixIcon: icon,
           contentPadding: EdgeInsets.all(16),
@@ -53,16 +60,16 @@ class CustomTextFormField extends StatelessWidget {
           filled: true,
           fillColor: Colors.white,
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+            borderRadius: BorderRadius.all(Radius.circular(5)),
             borderSide: BorderSide(color: Colors.white),
           ),
 
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+            borderRadius: BorderRadius.all(Radius.circular(5)),
             borderSide: const BorderSide(color: Colors.white),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+            borderRadius: BorderRadius.all(Radius.circular(5)),
             borderSide: BorderSide(color: ThemeColors.primary),
           ),
         ),

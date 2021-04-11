@@ -3,6 +3,7 @@ import 'package:clean_space/errors/failure.dart';
 import 'package:clean_space/models/user_profile.dart';
 import 'package:clean_space/services/user_profile_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:clean_space/utils/extensions/string_extension.dart';
 
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -32,8 +33,12 @@ class AuthenticationService {
   }
 
   Future<UserProfile> signInWithEmailAndPassword(
-      String email, String password) async {
+      String emailOrUsername, String password) async {
     try {
+      String email = emailOrUsername;
+      if(!emailOrUsername.isEmail){
+        email = await _userProfileService.getEmailFromUsername(emailOrUsername);
+      }
       await _firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -123,4 +128,6 @@ class AuthenticationService {
             'Something went wrong on our side. Please try again';
     }
   }
+
+
 }
