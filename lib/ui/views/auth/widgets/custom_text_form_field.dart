@@ -1,5 +1,6 @@
 import 'package:clean_space/ui/utils/theme_colors.dart';
 import 'package:flutter/material.dart';
+
 class CustomTextFormField extends StatelessWidget {
   final Icon icon;
   final String hintText;
@@ -12,6 +13,9 @@ class CustomTextFormField extends StatelessWidget {
   final TextInputType keyboardType;
   final void Function(String) onChanged;
   final int maxLength;
+  final int maxLines;
+  final Color borderColor;
+  final BorderRadius borderRadius;
 
   const CustomTextFormField({
     this.icon,
@@ -19,14 +23,20 @@ class CustomTextFormField extends StatelessWidget {
     this.controller,
     this.enabled = true,
     this.validator,
-    this.textColor, this.obscureText = false, this.suffixIcon, this.keyboardType, this.onChanged, this.maxLength,
+    this.textColor,
+    this.obscureText = false,
+    this.suffixIcon,
+    this.keyboardType,
+    this.onChanged,
+    this.maxLength, this.maxLines = 1, this.borderColor = Colors.white, this.borderRadius = const BorderRadius.all(Radius.circular(5)),
+
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10.0),
-      decoration:  BoxDecoration(
+      decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
             color: Color.fromRGBO(0, 0, 0, 0.06),
@@ -49,10 +59,11 @@ class CustomTextFormField extends StatelessWidget {
         ),
         controller: controller,
         readOnly: !enabled,
-    keyboardType: keyboardType,
-
+        keyboardType: keyboardType,
+maxLines: maxLines,
         decoration: InputDecoration(
-counterText: "",
+
+          counterText: "",
           suffixIcon: suffixIcon,
           prefixIcon: icon,
           contentPadding: EdgeInsets.all(16),
@@ -60,16 +71,15 @@ counterText: "",
           filled: true,
           fillColor: Colors.white,
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            borderSide: BorderSide(color: Colors.white),
+            borderRadius: borderRadius,
+            borderSide: BorderSide(color: borderColor),
           ),
-
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            borderSide: const BorderSide(color: Colors.white),
+            borderRadius: borderRadius,
+            borderSide: BorderSide(color: borderColor),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
+            borderRadius: borderRadius,
             borderSide: BorderSide(color: ThemeColors.primary),
           ),
         ),

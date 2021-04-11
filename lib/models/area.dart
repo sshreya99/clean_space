@@ -27,4 +27,6 @@ class Location {
   String toString() {
     return 'Location{point: $point, country: $country, state: $state, city: $city, area: $area}';
   }
+
+  Location({this.point, this.country, this.state, this.city, this.area});
 }

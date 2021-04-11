@@ -9,15 +9,16 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
+import '../models/post.dart';
 import '../models/user_profile.dart';
 import '../ui/views/auth/forgot_password_send_verification_screen.dart';
 import '../ui/views/auth/login_screen.dart';
 import '../ui/views/auth/reset_new_password_screen.dart';
 import '../ui/views/auth/signup_screen.dart';
-import '../ui/views/complaints/complaints_view.dart';
 import '../ui/views/home/feed_view.dart';
 import '../ui/views/home/home_screen.dart';
-import '../ui/views/posts/post_view.dart';
+import '../ui/views/posts/create_post_screen.dart';
+import '../ui/views/posts/feed_single_screen.dart';
 import '../ui/views/profile/profile_screen.dart';
 import '../ui/views/profile/settings_screen.dart';
 import '../ui/views/startup/on_boarding_screen.dart';
@@ -34,9 +35,9 @@ class Routes {
   static const String profileScreen = '/profile-screen';
   static const String settingsScreen = '/settings-screen';
   static const String homeScreen = '/home-screen';
-  static const String complaintsView = '/complaints-view';
-  static const String postView = '/post-view';
+  static const String createPostScreen = '/create-post-screen';
   static const String feedView = '/feed-view';
+  static const String feedSingleScreen = '/feed-single-screen';
   static const all = <String>{
     startupScreen,
     onBoardingScreen,
@@ -47,9 +48,9 @@ class Routes {
     profileScreen,
     settingsScreen,
     homeScreen,
-    complaintsView,
-    postView,
+    createPostScreen,
     feedView,
+    feedSingleScreen,
   };
 }
 
@@ -67,9 +68,9 @@ class Router extends RouterBase {
     RouteDef(Routes.profileScreen, page: ProfileScreen),
     RouteDef(Routes.settingsScreen, page: SettingsScreen),
     RouteDef(Routes.homeScreen, page: HomeScreen),
-    RouteDef(Routes.complaintsView, page: ComplaintsView),
-    RouteDef(Routes.postView, page: PostView),
+    RouteDef(Routes.createPostScreen, page: CreatePostScreen),
     RouteDef(Routes.feedView, page: FeedView),
+    RouteDef(Routes.feedSingleScreen, page: FeedSingleScreen),
   ];
   @override
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
@@ -111,13 +112,11 @@ class Router extends RouterBase {
       );
     },
     ProfileScreen: (data) {
-      final args = data.getArgs<ProfileScreenArguments>(
-        orElse: () => ProfileScreenArguments(),
-      );
+      final args = data.getArgs<ProfileScreenArguments>(nullOk: false);
       return MaterialPageRoute<dynamic>(
         builder: (context) => ProfileScreen(
-          key: args.key,
           userProfile: args.userProfile,
+          isCurrentProfile: args.isCurrentProfile,
         ),
         settings: data,
       );
@@ -134,21 +133,30 @@ class Router extends RouterBase {
         settings: data,
       );
     },
-    ComplaintsView: (data) {
-      return MaterialPageRoute<dynamic>(
-        builder: (context) => ComplaintsView(),
-        settings: data,
+    CreatePostScreen: (data) {
+      final args = data.getArgs<CreatePostScreenArguments>(
+        orElse: () => CreatePostScreenArguments(),
       );
-    },
-    PostView: (data) {
       return MaterialPageRoute<dynamic>(
-        builder: (context) => PostView(),
+        builder: (context) => CreatePostScreen(
+          isComplaint: args.isComplaint,
+          post: args.post,
+        ),
         settings: data,
       );
     },
     FeedView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => FeedView(),
+        settings: data,
+      );
+    },
+    FeedSingleScreen: (data) {
+      final args = data.getArgs<FeedSingleScreenArguments>(
+        orElse: () => FeedSingleScreenArguments(),
+      );
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => FeedSingleScreen(post: args.post),
         settings: data,
       );
     },
@@ -161,7 +169,21 @@ class Router extends RouterBase {
 
 /// ProfileScreen arguments holder class
 class ProfileScreenArguments {
-  final Key key;
   final UserProfile userProfile;
-  ProfileScreenArguments({this.key, this.userProfile});
+  final bool isCurrentProfile;
+  ProfileScreenArguments(
+      {@required this.userProfile, this.isCurrentProfile = false});
+}
+
+/// CreatePostScreen arguments holder class
+class CreatePostScreenArguments {
+  final bool isComplaint;
+  final Post post;
+  CreatePostScreenArguments({this.isComplaint = false, this.post});
+}
+
+/// FeedSingleScreen arguments holder class
+class FeedSingleScreenArguments {
+  final Post post;
+  FeedSingleScreenArguments({this.post});
 }

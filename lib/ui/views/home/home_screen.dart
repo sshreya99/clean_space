@@ -2,6 +2,7 @@ import 'package:clean_space/app/locator.dart';
 import 'package:clean_space/app/router.gr.dart';
 import 'package:clean_space/models/user_profile.dart';
 import 'package:clean_space/services/authentication_service.dart';
+import 'package:clean_space/ui/views/auth/login_screen.dart';
 import 'package:clean_space/ui/views/home/feed_view.dart';
 import 'package:clean_space/ui/views/profile/profile_screen.dart';
 import 'package:clean_space/ui/views/startup/startup_screen.dart';
@@ -20,27 +21,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int _currentIndex = 0;
 
-  final List<Widget> _children = [
-    FeedView(),
-    FeedView(),
-    FeedView(),
-    ProfileScreen(),
-  ];
-  _showPopUpMenu() {
-    PopupMenu menu = PopupMenu(
-        items: [
-          MenuItem(title: "Add Complaint", image: Icon(Icons.book_online)),
-          MenuItem(title: "Add Post", image: Icon(Icons.post_add_rounded)),
-        ],
-        onClickMenu: (MenuItemProvider item) {
-          if (item.menuTitle == "Add Complaint") {
-            Navigator.pushReplacementNamed(context, Routes.complaintsView);
-          } else if (item.menuTitle == "Add Post") {
-            Navigator.pushReplacementNamed(context, Routes.postView);
-          }
-        });
-    menu.show();
+  UserProfile _userProfile;
+
+  @override
+  void initState() {
+    fetchUserProfile();
+    super.initState();
   }
+
+  Future<void> fetchUserProfile()async{
+    _userProfile = await _authenticationService.currentUserProfile;
+  }
+
 
   _showBottomSheet() {
     showModalBottomSheet(
@@ -62,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: GestureDetector(
                       onTap: () {
                         Navigator.pushReplacementNamed(
-                            context, Routes.complaintsView);
+                            context, Routes.createPostScreen, arguments: CreatePostScreenArguments(isComplaint: true),);
                       },
                       child: Text(
                         "Add Complaint",
@@ -78,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: GestureDetector(
                       onTap: () {
                         Navigator.pushReplacementNamed(
-                            context, Routes.postView);
+                            context, Routes.createPostScreen);
                       },
                       child: Text(
                         "Add Post",
@@ -101,7 +93,18 @@ class _HomeScreenState extends State<HomeScreen> {
           child: FutureBuilder<UserProfile>(
               future: _authenticationService.currentUserProfile,
               builder: (context, snapshot) {
-                if (snapshot.hasData) return _children[_currentIndex];
+                if (snapshot.hasData) return [
+                  FeedView(),
+                  FeedView(),
+                  FeedView(),
+                  FutureBuilder<UserProfile>(
+                    future: _authenticationService.currentUserProfile,
+                    builder: (context, snapshot) {
+                      if(!snapshot.hasData) return Center(child: CircularProgressIndicator());
+                      return ProfileScreen(userProfile: snapshot.data);
+                    }
+                  ),
+                ][_currentIndex];
                 return Text("Not Logged in");
               }),
         ),

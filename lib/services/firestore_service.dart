@@ -51,14 +51,14 @@ class FirestoreService {
       String collectionPath, T builder(DocumentSnapshot snapshot)) {
     final collectionRef = _firebaseFireStore.collection(collectionPath);
     return collectionRef.snapshots().map<List<T>>((snapshot) =>
-        snapshot.docs.map<T>((snapshot) => builder(snapshot)).toList());
+        snapshot.docs.map<T>((snapshot) => builder(snapshot)).toList().reversed.toList());
   }
 
   Stream<List<T>> getDataStreamFromQuerySnapShotStream<T>(
       Stream<QuerySnapshot> snapshots,
       T builder(DocumentSnapshot snapshot)) {
     return snapshots.map<List<T>>((snapshot) =>
-        snapshot.docs.map<T>((snapshot) => builder(snapshot)).toList());
+        snapshot.docs.map<T>((snapshot) => builder(snapshot)).toList().reversed.toList());
   }
 
   Future<void> deleteDocument(String path) async {

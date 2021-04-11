@@ -1,3 +1,4 @@
+import 'package:clean_space/models/area.dart';
 import 'package:flutter/foundation.dart';
 
 class UserProfile {
@@ -7,10 +8,17 @@ class UserProfile {
   String email;
   String phone;
   String avatarUrl;
-  String location = "";
+  Location location;
   String bio = "";
   DateTime createdAt;
   DateTime updatedAt;
+
+
+  @override
+  String toString() {
+    return 'UserProfile{uid: $uid, username: $username, email: $email, phone: $phone, avatarUrl: $avatarUrl, location: $location, bio: $bio, createdAt: $createdAt, updatedAt: $updatedAt}';
+  }
+
 
   UserProfile({
     this.uid,
@@ -34,8 +42,8 @@ class UserProfile {
       email: map['email'] as String,
       phone: map['phone'] as String,
       avatarUrl: map['avatarUrl'] as String,
-      location: map['location'] as String,
-      bio: map['location'] as String,
+      location: (map['location']) == null ? null  : Location.fromString(map['location']),
+      bio: map['bio'] as String,
       createdAt: map['createdAt'] == null
           ? null
           : DateTime.parse(map['createdAt'] as String),
@@ -51,7 +59,8 @@ class UserProfile {
       'username': this.username,
       'email': this.email,
       'phone': this.phone,
-      'location': this.location,
+      'bio': this.bio,
+      'location': this.location?.toStringForDatabase(),
       'avatarUrl': this.avatarUrl,
       'createdAt': this.createdAt?.toIso8601String(),
       'updatedAt': this.updatedAt?.toIso8601String(),

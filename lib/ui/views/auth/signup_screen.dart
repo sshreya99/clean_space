@@ -160,7 +160,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     final email = _emailTextEditingController.text.trim();
     final password = _passwordTextEditingController.text.trim();
-    final userName = _usernameTextEditingController.text.trim();
+    final userName = _usernameTextEditingController.text.trim().toLowerCase();
     final phoneNumber = _phoneNumberTextEditingController.text.trim();
 
     try {

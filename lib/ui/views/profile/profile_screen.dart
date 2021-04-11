@@ -2,19 +2,20 @@ import 'dart:ui';
 
 import 'package:clean_space/app/locator.dart';
 import 'package:clean_space/app/router.gr.dart';
-import 'package:clean_space/models/complaint.dart';
 import 'package:clean_space/models/post.dart';
 import 'package:clean_space/models/user_profile.dart';
 import 'package:clean_space/services/complaints_service.dart';
 import 'package:clean_space/services/posts_service.dart';
 import 'package:clean_space/ui/utils/theme_colors.dart';
+import 'package:clean_space/ui/views/widgets/feed_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
   final UserProfile userProfile;
+  final bool isCurrentProfile;
 
-  ProfileScreen({Key key, this.userProfile}) : super(key: key);
+  ProfileScreen({@required this.userProfile, this.isCurrentProfile = false});
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -42,9 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       });
     });
 
-    if(widget.userProfile == null){
-
-    }
+    if (widget.userProfile == null) {}
     super.initState();
   }
 
@@ -91,17 +90,20 @@ class _ProfileScreenState extends State<ProfileScreen>
                       ),
                       AppBar(
                         elevation: 0,
+                        leading: widget.isCurrentProfile ? null : BackButton(),
                         automaticallyImplyLeading: false,
                         backgroundColor: Colors.transparent,
-                        actions: [
-                          IconButton(
-                            icon: Icon(Icons.settings),
-                            onPressed: () => Navigator.pushNamed(
-                              context,
-                              Routes.settingsScreen,
-                            ),
-                          ),
-                        ],
+                        actions: widget.isCurrentProfile
+                            ? [
+                                IconButton(
+                                  icon: Icon(Icons.settings),
+                                  onPressed: () => Navigator.pushNamed(
+                                    context,
+                                    Routes.settingsScreen,
+                                  ),
+                                ),
+                              ]
+                            : [],
                       ),
                       Container(
                         margin: EdgeInsets.only(top: 130),
@@ -118,10 +120,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             SizedBox(height: 90),
-                            Text(widget.userProfile.username ?? "",
+                            Text(widget?.userProfile?.username ?? "",
                                 style: TextStyle(fontSize: 16)),
                             SizedBox(height: 5),
-                            Text(widget.userProfile.location ?? "",
+                            Text(widget?.userProfile?.location?.area ?? "",
                                 style: TextStyle(
                                     fontSize: 10, color: Colors.grey)),
                             SizedBox(height: 20),
@@ -129,7 +131,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 40),
                               child: Text(
-                                widget.userProfile.location ?? "",
+                                widget.userProfile.bio ?? "",
                                 style: TextStyle(fontSize: 13),
                                 textAlign: TextAlign.center,
                               ),
@@ -211,7 +213,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 tabs: [
                   Tab(
                     child: Text(
-                      "My Posts",
+                      "Posts",
                       style: TextStyle(
                         fontWeight: currentTabIndex == 0
                             ? FontWeight.bold
@@ -221,7 +223,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ),
                   Tab(
                     child: Text(
-                      "My Complaints",
+                      "Complaints",
                       style: TextStyle(
                         fontWeight: currentTabIndex == 1
                             ? FontWeight.bold
@@ -240,6 +242,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         stream: _postsService.getAllPostsOf(widget.userProfile),
                         builder: (context, postsSnapshot) {
                           if (postsSnapshot.hasError) {
+                            print("error: " + postsSnapshot.error.toString());
                             return Text(
                               "Something went wrong while fetching Posts, please try again later!",
                               textAlign: TextAlign.center,
@@ -249,26 +252,27 @@ class _ProfileScreenState extends State<ProfileScreen>
                           if (!postsSnapshot.hasData)
                             return Center(child: CircularProgressIndicator());
                           List<Post> posts = postsSnapshot.data;
-                          if(posts.isEmpty)
-                            return Text("No posts found!");
+                          if (posts.isEmpty) return Text("No posts found!");
                           return GridView.count(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 20),
                             crossAxisCount: 3,
                             mainAxisSpacing: 10,
                             crossAxisSpacing: 10,
-                            children:
-                                posts.map((post) => PostGridItem(post)).toList(),
+                            children: posts
+                                .map((post) => PostGridItem(post))
+                                .toList(),
                           );
                         },
                       ),
                     ),
                     Center(
-                      child: StreamBuilder<List<Complaint>>(
+                      child: StreamBuilder<List<Post>>(
                         stream: _complaintsService
                             .getAllComplaintsOf(widget.userProfile),
                         builder: (context, complaintsSnapshot) {
                           if (complaintsSnapshot.hasError) {
+                            print("error: " + complaintsSnapshot.error);
                             return Text(
                               "Something went wrong while fetching complaints, please try again later!",
                               textAlign: TextAlign.center,
@@ -277,9 +281,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                           }
                           if (!complaintsSnapshot.hasData)
                             return Center(child: CircularProgressIndicator());
-                          List<Complaint> complaints = complaintsSnapshot.data;
+                          List<Post> complaints = complaintsSnapshot.data;
 
-                          if(complaints.isEmpty)
+                          if (complaints.isEmpty)
                             return Text("No complaints found!");
                           return GridView.count(
                             padding: EdgeInsets.symmetric(
@@ -290,7 +294,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                             mainAxisSpacing: 10,
                             crossAxisSpacing: 10,
                             children: complaints
-                                .map((complaint) => ComplaintGridItem(complaint))
+                                .map((complaint) => PostGridItem(complaint))
                                 .toList(),
                           );
                         },
@@ -310,7 +314,9 @@ class _ProfileScreenState extends State<ProfileScreen>
     return Padding(
       padding: const EdgeInsets.only(top: 70),
       child: CircleAvatar(
-        backgroundImage: AssetImage("assets/images/avatar_demo.jpeg"),
+        backgroundImage: widget?.userProfile?.avatarUrl != null
+            ? NetworkImage(widget.userProfile.avatarUrl)
+            : AssetImage("assets/images/avatar_demo.jpeg"),
         // child: Image.asset(),
         radius: 60,
       ),
@@ -326,20 +332,18 @@ class PostGridItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return post.imageUrl != null
-        ? AspectRatio(aspectRatio: 1, child: Image.network(post.imageUrl))
-        : Container();
-  }
-}
-
-class ComplaintGridItem extends StatelessWidget {
-  final Complaint complaint;
-
-  const ComplaintGridItem(this.complaint);
-
-  @override
-  Widget build(BuildContext context) {
-    return complaint.imageUrl != null
-        ? AspectRatio(aspectRatio: 1, child: Image.network(complaint.imageUrl))
+        ? GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, Routes.feedSingleScreen,
+                  arguments: FeedSingleScreenArguments(
+                    post: post,
+                  ));
+            },
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: Image.network(post.imageUrl, fit: BoxFit.cover),
+            ),
+          )
         : Container();
   }
 }

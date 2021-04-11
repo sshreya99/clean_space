@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Post {
   String id;
+  bool isComplaint = false;
   String imageUrl;
   String content;
   String category;
@@ -12,6 +13,11 @@ class Post {
   List<String> likes;
   DateTime createdAt;
   DateTime updatedAt;
+
+  @override
+  String toString() {
+    return 'Post{id: $id, isComplaint: $isComplaint, imageUrl: $imageUrl, content: $content, category: $category, location: $location, author: $author, likes: $likes, createdAt: $createdAt, updatedAt: $updatedAt}';
+  }
 
   Post({
     this.id,
@@ -23,6 +29,7 @@ class Post {
     this.likes,
     this.createdAt,
     this.updatedAt,
+    this.isComplaint = false,
   });
 
   factory Post.fromSnapshot(DocumentSnapshot snapshot) {
@@ -43,22 +50,21 @@ class Post {
           ? map['likes'].cast<String>()
           : [],
       location: Location.fromString(map['location'] as String),
-      createdAt: map['createdAt'] ?? DateTime.parse(map['createdAt'] as String),
-      updatedAt: map['updatedAt'] ?? DateTime.parse(map['updatedAt'] as String),
+      createdAt: map['createdAt'] == null ? null : DateTime.parse(map['createdAt'] as String),
+      updatedAt: map['updatedAt'] == null ? null : DateTime.parse(map['updatedAt'] as String),
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      "id": id,
       "imageUrl": imageUrl,
       "content": content,
       "category": category,
       "author": author,
       "likes": likes,
       "location": location?.toStringForDatabase(),
-      "createdAt": createdAt,
-      "updatedAt": updatedAt,
+      "createdAt": createdAt?.toIso8601String(),
+      "updatedAt": updatedAt?.toIso8601String(),
     };
   }
 }

@@ -132,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
   _performLogin() async {
     if (!_loginFormKey.currentState.validate()) return;
 
-    final email = _emailTextEditingController.text.trim();
+    final email = _emailTextEditingController.text.trim().toLowerCase();
     final password = _passwordTextEditingController.text.trim();
 
     try {
