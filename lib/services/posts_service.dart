@@ -4,10 +4,12 @@ import 'package:clean_space/models/post.dart';
 import 'package:clean_space/models/area.dart';
 import 'package:clean_space/services/firestore_service.dart';
 import 'package:clean_space/utils/constants/firebase/firestore_collections.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 abstract class PostsServiceBase{
-  Stream<Post> getAllPosts();
-  Stream<Post> getAllPostsOf(UserProfile user);
+  Stream<List<Post>> getAllPosts();
+  Stream<List<Post>> getAllPostsOf(UserProfile user);
   Stream<Post> getPostsByArea(Area area);
   Future<int> getPostsByAreaCount(Area area);
   Future<Post> getPost(id);
@@ -18,6 +20,7 @@ abstract class PostsServiceBase{
 }
 
 class PostsService implements PostsServiceBase{
+  FirebaseFirestore _firestore = locator<FirebaseFirestore>();
   FirestoreService _firestoreService = locator<FirestoreService>();
   String postsCollectionPath = FireStoreCollections.posts;
 
@@ -33,14 +36,16 @@ class PostsService implements PostsServiceBase{
   }
 
   @override
-  Stream<Post> getAllPosts() {
-    return _firestoreService.getAllDocuments(postsCollectionPath, (snapshot) => Post.fromSnapshot(snapshot));
+  Stream<List<Post>> getAllPosts() {
+    return _firestoreService.collectionStream<Post>(postsCollectionPath, (snapshot) => Post.fromSnapshot(snapshot));
   }
 
   @override
-  Stream<Post> getAllPostsOf(UserProfile user) {
-    // TODO: implement getAllPostsOf
-    throw UnimplementedError();
+  Stream<List<Post>> getAllPostsOf(UserProfile user) {
+    return _firestoreService.getDataStreamFromQuerySnapShotStream<Post>(
+        _firestore.collection(postsCollectionPath).where("author", isEqualTo: user.uid).snapshots(),
+            (snapshot) => Post.fromSnapshot(snapshot)
+    );
   }
 
   @override

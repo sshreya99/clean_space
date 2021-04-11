@@ -1,11 +1,21 @@
 import 'dart:ui';
 
+import 'package:clean_space/app/locator.dart';
 import 'package:clean_space/app/router.gr.dart';
+import 'package:clean_space/models/complaint.dart';
+import 'package:clean_space/models/post.dart';
+import 'package:clean_space/models/user_profile.dart';
+import 'package:clean_space/services/complaints_service.dart';
+import 'package:clean_space/services/posts_service.dart';
 import 'package:clean_space/ui/utils/theme_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
+  final UserProfile userProfile;
+
+  ProfileScreen({Key key, this.userProfile}) : super(key: key);
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
@@ -14,6 +24,9 @@ class _ProfileScreenState extends State<ProfileScreen>
     with TickerProviderStateMixin {
   TabController controller;
   int currentTabIndex = 0;
+
+  final PostsService _postsService = locator<PostsService>();
+  final ComplaintsService _complaintsService = locator<ComplaintsService>();
 
   @override
   void initState() {
@@ -28,6 +41,10 @@ class _ProfileScreenState extends State<ProfileScreen>
         currentTabIndex = controller.index;
       });
     });
+
+    if(widget.userProfile == null){
+
+    }
     super.initState();
   }
 
@@ -78,9 +95,12 @@ class _ProfileScreenState extends State<ProfileScreen>
                         backgroundColor: Colors.transparent,
                         actions: [
                           IconButton(
-                              icon: Icon(Icons.settings),
-                              onPressed: () => Navigator.pushNamed(
-                                  context, Routes.settingsScreen)),
+                            icon: Icon(Icons.settings),
+                            onPressed: () => Navigator.pushNamed(
+                              context,
+                              Routes.settingsScreen,
+                            ),
+                          ),
                         ],
                       ),
                       Container(
@@ -98,10 +118,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             SizedBox(height: 90),
-                            Text("Rohan_Sharma_11",
+                            Text(widget.userProfile.username ?? "",
                                 style: TextStyle(fontSize: 16)),
                             SizedBox(height: 5),
-                            Text("Manjalpur-darbarchowkli",
+                            Text(widget.userProfile.location ?? "",
                                 style: TextStyle(
                                     fontSize: 10, color: Colors.grey)),
                             SizedBox(height: 20),
@@ -109,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 40),
                               child: Text(
-                                "This garden greenery and This garden greenery is Amazing and the garden is so clean...",
+                                widget.userProfile.location ?? "",
                                 style: TextStyle(fontSize: 13),
                                 textAlign: TextAlign.center,
                               ),
@@ -191,7 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 tabs: [
                   Tab(
                     child: Text(
-                      "13k Posts",
+                      "My Posts",
                       style: TextStyle(
                         fontWeight: currentTabIndex == 0
                             ? FontWeight.bold
@@ -201,7 +221,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ),
                   Tab(
                     child: Text(
-                      "1k Complaints",
+                      "My Complaints",
                       style: TextStyle(
                         fontWeight: currentTabIndex == 1
                             ? FontWeight.bold
@@ -215,27 +235,65 @@ class _ProfileScreenState extends State<ProfileScreen>
                 child: TabBarView(
                   controller: controller,
                   children: [
-                    GridView.count(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                      children: List.generate(
-                        50,
-                        (index) =>
-                            Image.asset("assets/images/avatar_demo.jpeg"),
+                    Center(
+                      child: StreamBuilder<List<Post>>(
+                        stream: _postsService.getAllPostsOf(widget.userProfile),
+                        builder: (context, postsSnapshot) {
+                          if (postsSnapshot.hasError) {
+                            return Text(
+                              "Something went wrong while fetching Posts, please try again later!",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.red),
+                            );
+                          }
+                          if (!postsSnapshot.hasData)
+                            return Center(child: CircularProgressIndicator());
+                          List<Post> posts = postsSnapshot.data;
+                          if(posts.isEmpty)
+                            return Text("No posts found!");
+                          return GridView.count(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 20),
+                            crossAxisCount: 3,
+                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 10,
+                            children:
+                                posts.map((post) => PostGridItem(post)).toList(),
+                          );
+                        },
                       ),
                     ),
-                    GridView.count(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                      children: List.generate(
-                        50,
-                        (index) => Image.asset("assets/images/demo_post.png"),
+                    Center(
+                      child: StreamBuilder<List<Complaint>>(
+                        stream: _complaintsService
+                            .getAllComplaintsOf(widget.userProfile),
+                        builder: (context, complaintsSnapshot) {
+                          if (complaintsSnapshot.hasError) {
+                            return Text(
+                              "Something went wrong while fetching complaints, please try again later!",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.red),
+                            );
+                          }
+                          if (!complaintsSnapshot.hasData)
+                            return Center(child: CircularProgressIndicator());
+                          List<Complaint> complaints = complaintsSnapshot.data;
+
+                          if(complaints.isEmpty)
+                            return Text("No complaints found!");
+                          return GridView.count(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 20,
+                            ),
+                            crossAxisCount: 3,
+                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 10,
+                            children: complaints
+                                .map((complaint) => ComplaintGridItem(complaint))
+                                .toList(),
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -257,5 +315,31 @@ class _ProfileScreenState extends State<ProfileScreen>
         radius: 60,
       ),
     );
+  }
+}
+
+class PostGridItem extends StatelessWidget {
+  final Post post;
+
+  const PostGridItem(this.post);
+
+  @override
+  Widget build(BuildContext context) {
+    return post.imageUrl != null
+        ? AspectRatio(aspectRatio: 1, child: Image.network(post.imageUrl))
+        : Container();
+  }
+}
+
+class ComplaintGridItem extends StatelessWidget {
+  final Complaint complaint;
+
+  const ComplaintGridItem(this.complaint);
+
+  @override
+  Widget build(BuildContext context) {
+    return complaint.imageUrl != null
+        ? AspectRatio(aspectRatio: 1, child: Image.network(complaint.imageUrl))
+        : Container();
   }
 }

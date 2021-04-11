@@ -9,6 +9,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
+import '../models/user_profile.dart';
 import '../ui/views/auth/forgot_password_send_verification_screen.dart';
 import '../ui/views/auth/login_screen.dart';
 import '../ui/views/auth/reset_new_password_screen.dart';
@@ -110,8 +111,14 @@ class Router extends RouterBase {
       );
     },
     ProfileScreen: (data) {
+      final args = data.getArgs<ProfileScreenArguments>(
+        orElse: () => ProfileScreenArguments(),
+      );
       return MaterialPageRoute<dynamic>(
-        builder: (context) => ProfileScreen(),
+        builder: (context) => ProfileScreen(
+          key: args.key,
+          userProfile: args.userProfile,
+        ),
         settings: data,
       );
     },
@@ -146,4 +153,15 @@ class Router extends RouterBase {
       );
     },
   };
+}
+
+/// ************************************************************************
+/// Arguments holder classes
+/// *************************************************************************
+
+/// ProfileScreen arguments holder class
+class ProfileScreenArguments {
+  final Key key;
+  final UserProfile userProfile;
+  ProfileScreenArguments({this.key, this.userProfile});
 }

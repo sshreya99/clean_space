@@ -4,13 +4,14 @@ import 'package:clean_space/models/user_profile.dart';
 import 'package:clean_space/models/area.dart';
 import 'package:clean_space/services/firestore_service.dart';
 import 'package:clean_space/utils/constants/firebase/firestore_collections.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class ComplaintsServiceBase {
-  Stream<Complaint> getAllComplaints();
+  Stream<List<Complaint>> getAllComplaints();
 
-  Stream<Complaint> getAllComplaintsOf(UserProfile complaint);
+  Stream<List<Complaint>> getAllComplaintsOf(UserProfile complaint);
 
-  Stream<Complaint> getComplaintsByArea(Area area);
+  Stream<List<Complaint>> getComplaintsByArea(Area area);
 
   Future<int> getComplaintsByAreaCount(Area area);
 
@@ -27,6 +28,8 @@ class ComplaintsService implements ComplaintsServiceBase{
 
   FirestoreService _firestoreService = locator<FirestoreService>();
   String complaintsCollectionPath = FireStoreCollections.complaints;
+  FirebaseFirestore _firestore = locator<FirebaseFirestore>();
+
 
   @override
   Future<void> createComplaint(Complaint complaint) {
@@ -40,14 +43,16 @@ class ComplaintsService implements ComplaintsServiceBase{
   }
 
   @override
-  Stream<Complaint> getAllComplaints() {
-    return _firestoreService.getAllDocuments(complaintsCollectionPath, (snapshot) => Complaint.fromSnapshot(snapshot));
+  Stream<List<Complaint>> getAllComplaints() {
+    return _firestoreService.collectionStream(complaintsCollectionPath, (snapshot) => Complaint.fromSnapshot(snapshot));
   }
 
   @override
-  Stream<Complaint> getAllComplaintsOf(UserProfile complaint) {
-    // TODO: implement getAllComplaintsOf
-    throw UnimplementedError();
+  Stream<List<Complaint>> getAllComplaintsOf(UserProfile user) {
+    return _firestoreService.getDataStreamFromQuerySnapShotStream<Complaint>(
+        _firestore.collection(complaintsCollectionPath).where("author", isEqualTo: user.uid).snapshots(),
+            (snapshot) => Complaint.fromSnapshot(snapshot)
+    );
   }
 
   @override
@@ -57,7 +62,7 @@ class ComplaintsService implements ComplaintsServiceBase{
   }
 
   @override
-  Stream<Complaint> getComplaintsByArea(Area area) {
+  Stream<List<Complaint>> getComplaintsByArea(Area area) {
     // TODO: implement getComplaintsByArea
     throw UnimplementedError();
   }

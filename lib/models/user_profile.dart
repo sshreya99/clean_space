@@ -7,6 +7,8 @@ class UserProfile {
   String email;
   String phone;
   String avatarUrl;
+  String location = "";
+  String bio = "";
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -17,6 +19,8 @@ class UserProfile {
     @required this.email,
     this.phone,
     this.avatarUrl,
+    this.location,
+    this.bio,
     this.createdAt,
     this.updatedAt,
   });
@@ -30,6 +34,8 @@ class UserProfile {
       email: map['email'] as String,
       phone: map['phone'] as String,
       avatarUrl: map['avatarUrl'] as String,
+      location: map['location'] as String,
+      bio: map['location'] as String,
       createdAt: map['createdAt'] == null
           ? null
           : DateTime.parse(map['createdAt'] as String),
@@ -45,6 +51,7 @@ class UserProfile {
       'username': this.username,
       'email': this.email,
       'phone': this.phone,
+      'location': this.location,
       'avatarUrl': this.avatarUrl,
       'createdAt': this.createdAt?.toIso8601String(),
       'updatedAt': this.updatedAt?.toIso8601String(),

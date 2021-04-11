@@ -1,19 +1,18 @@
+import 'package:clean_space/app/locator.dart';
 import 'package:clean_space/errors/failure.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class FirestoreService{
-
-
-  static FirebaseFirestore _firebaseFireStore = FirebaseFirestore.instance;
+class FirestoreService {
+  static FirebaseFirestore _firebaseFireStore = locator<FirebaseFirestore>();
 
   Future<void> setData(String path, Map<String, dynamic> data) {
     return _tryFutureOrThrowFailure<void>(() async {
       final docRef = _firebaseFireStore.doc(path);
       print("$path : $data");
       await docRef.set(data).timeout(
-        Duration(seconds: 15),
-        onTimeout: () => throw Failure(message: "Retry, timeout exceeded!"),
-      );
+            Duration(seconds: 15),
+            onTimeout: () => throw Failure(message: "Retry, timeout exceeded!"),
+          );
     });
   }
 
@@ -22,9 +21,9 @@ class FirestoreService{
       final collectionRef = _firebaseFireStore.collection(collectionPath);
       print("$collectionPath : $data");
       await collectionRef.add(data).timeout(
-        Duration(seconds: 15),
-        onTimeout: () => throw Failure(message: "Retry, timeout exceeded!"),
-      );
+            Duration(seconds: 15),
+            onTimeout: () => throw Failure(message: "Retry, timeout exceeded!"),
+          );
     });
   }
 
@@ -33,9 +32,9 @@ class FirestoreService{
       final docRef = _firebaseFireStore.doc(path);
       print("[updateData - $path, $data]: Updating Data...");
       await docRef.update(data).timeout(
-        Duration(seconds: 15),
-        onTimeout: () => throw Failure(message: "Retry, timeout exceeded!"),
-      );
+            Duration(seconds: 15),
+            onTimeout: () => throw Failure(message: "Retry, timeout exceeded!"),
+          );
     });
   }
 
@@ -48,18 +47,24 @@ class FirestoreService{
     });
   }
 
-  Stream<T> getAllDocuments<T>(
-      String collectionPath,T builder(DocumentSnapshot snapshot)) {
-    final docRef = _firebaseFireStore.doc(collectionPath);
-    return docRef.snapshots().map<T>((snapshot) => builder(snapshot));
-
+  Stream<List<T>> collectionStream<T>(
+      String collectionPath, T builder(DocumentSnapshot snapshot)) {
+    final collectionRef = _firebaseFireStore.collection(collectionPath);
+    return collectionRef.snapshots().map<List<T>>((snapshot) =>
+        snapshot.docs.map<T>((snapshot) => builder(snapshot)).toList());
   }
 
-  Future<void> deleteDocument(
-      String path) async {
+  Stream<List<T>> getDataStreamFromQuerySnapShotStream<T>(
+      Stream<QuerySnapshot> snapshots,
+      T builder(DocumentSnapshot snapshot)) {
+    return snapshots.map<List<T>>((snapshot) =>
+        snapshot.docs.map<T>((snapshot) => builder(snapshot)).toList());
+  }
+
+  Future<void> deleteDocument(String path) async {
     return _tryFutureOrThrowFailure<void>(() async {
       final docRef = _firebaseFireStore.doc(path);
-     await docRef.delete();
+      await docRef.delete();
     });
   }
 

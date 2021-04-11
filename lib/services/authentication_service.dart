@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:clean_space/utils/extensions/string_extension.dart';
 
 class AuthenticationService {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseAuth _firebaseAuth = locator<FirebaseAuth>();
 
   final UserProfileService _userProfileService = locator<UserProfileService>();
 

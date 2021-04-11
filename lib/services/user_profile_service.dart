@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:clean_space/app/locator.dart';
 import 'package:clean_space/errors/failure.dart';
 import 'package:clean_space/models/user_profile.dart';
 import 'package:clean_space/utils/constants/firebase/firebase_storage_buckets.dart';
@@ -8,8 +9,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 class UserProfileService {
   // Firebase instances
-  static FirebaseFirestore _firebaseFireStore = FirebaseFirestore.instance;
-  static FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+  static FirebaseFirestore _firebaseFireStore = locator<FirebaseFirestore>();
+  static FirebaseStorage _firebaseStorage = locator<FirebaseStorage>();
 
   // References
   final CollectionReference _userProfiles =

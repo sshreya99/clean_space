@@ -10,7 +10,6 @@ import 'package:clean_space/ui/utils/validators/auth_validators.dart';
 import 'package:clean_space/ui/views/auth/widgets/custom_text_form_field.dart';
 import 'package:clean_space/ui/views/widgets/custom_rounded_rectangular_button.dart';
 import 'package:clean_space/ui/views/widgets/unfocus_wrapper.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -118,7 +117,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
                 SizedBox(height: 20),
-                CustomRoundedRectangularButton(
+                isLoading ? Center(child: CircularProgressIndicator(),) :CustomRoundedRectangularButton(
                   onPressed: _performSignUp,
                   color: ThemeColors.primary,
                   child: Text(

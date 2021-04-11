@@ -15,7 +15,24 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          IconButton(icon: Icon(Icons.person), onPressed: () => Navigator.pushNamed(context, Routes.profileScreen)),
+          FutureBuilder<UserProfile>(
+              future: _authenticationService.currentUserProfile,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData)
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+
+                return IconButton(
+                  icon: Icon(Icons.person),
+                  onPressed: () => Navigator.pushNamed(
+                    context,
+                    Routes.profileScreen,
+                    arguments:
+                        ProfileScreenArguments(userProfile: snapshot.data),
+                  ),
+                );
+              }),
           IconButton(
             icon: Icon(Icons.exit_to_app),
             onPressed: () {
@@ -38,7 +55,8 @@ class HomeScreen extends StatelessWidget {
                         //  logout
                         await _authenticationService.signOut();
                         Navigator.pop(context);
-                        Navigator.pushReplacementNamed(context, Routes.startupScreen);
+                        Navigator.pushReplacementNamed(
+                            context, Routes.startupScreen);
                       },
                       child: Text("Yes"),
                     ),
@@ -54,7 +72,6 @@ class HomeScreen extends StatelessWidget {
         child: FutureBuilder<UserProfile>(
             future: _authenticationService.currentUserProfile,
             builder: (context, snapshot) {
-
               if (snapshot.hasData)
                 return Text(
                     "${snapshot.data.email} : ${snapshot.data.username}");
