@@ -24,6 +24,7 @@ dependencies:
   shared_preferences: 0.5.7+3
   stacked: ^1.7.7
   stacked_services: ^0.6.7
+  introduction_screen: ^1.0.5+2
 
 dev_dependencies:
   flutter_test:
@@ -31,6 +32,13 @@ dev_dependencies:
   auto_route_generator: ^0.6.10
   build_runner: ^1.11.1
   flutter_launcher_icons: ^0.8.0
+  # json_serializable: ^3.5.1
+
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/icon.png"
 
 flutter:
   uses-material-design: true
