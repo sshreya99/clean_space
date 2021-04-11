@@ -1,4 +1,7 @@
 import 'package:auto_route/auto_route_annotations.dart';
+import 'package:clean_space/ui/views/complaints/complaints_view.dart';
+import 'package:clean_space/ui/views/home/feed_view.dart';
+import 'package:clean_space/ui/views/posts/post_view.dart';
 import 'package:clean_space/ui/views/auth/forgot_password_send_verification_screen.dart';
 import 'package:clean_space/ui/views/auth/reset_new_password_screen.dart';
 import 'package:clean_space/ui/views/auth/signin_screen.dart';
@@ -21,7 +24,9 @@ import 'package:clean_space/ui/views/startup/startup_screen.dart';
   MaterialRoute(page: SettingsScreen),
 
   MaterialRoute(page: HomeScreen),
-
-
+  
+    MaterialRoute(page: ComplaintsView),
+  MaterialRoute(page: PostView),
+  MaterialRoute(page: FeedView),
 ])
 class $Router {}
