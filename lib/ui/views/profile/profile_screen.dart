@@ -272,7 +272,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                             .getAllComplaintsOf(widget.userProfile),
                         builder: (context, complaintsSnapshot) {
                           if (complaintsSnapshot.hasError) {
-                            print("error: " + complaintsSnapshot.error);
+                            print("error: " + complaintsSnapshot.error.toString());
                             return Text(
                               "Something went wrong while fetching complaints, please try again later!",
                               textAlign: TextAlign.center,

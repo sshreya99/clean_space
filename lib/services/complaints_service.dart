@@ -58,7 +58,7 @@ class ComplaintsService implements ComplaintsServiceBase{
   @override
   Stream<List<Post>> getAllComplaintsOf(UserProfile user) {
     return _firestoreService.getDataStreamFromQuerySnapShotStream<Post>(
-        _firestore.collection(complaintsCollectionPath).where("author", isEqualTo: user.uid).snapshots(),
+        _firestore.collection(complaintsCollectionPath).where("author", isEqualTo: user.uid).orderBy("createdAt", descending: true).snapshots(),
             (snapshot) => Post.fromSnapshot(snapshot)..isComplaint = true
     );
   }
@@ -72,7 +72,7 @@ class ComplaintsService implements ComplaintsServiceBase{
   @override
   Stream<List<Post>> getComplaintsByArea(Location location) {
     return _firestoreService.getDataStreamFromQuerySnapShotStream<Post>(
-        _firestore.collection(complaintsCollectionPath).where("location", isEqualTo: location.toStringForDatabase()).snapshots(),
+        _firestore.collection(complaintsCollectionPath).where("location", isEqualTo: location.toStringForDatabase()).orderBy("createdAt", descending: true).snapshots(),
             (snapshot) => Post.fromSnapshot(snapshot)
     );
   }
@@ -96,10 +96,13 @@ class ComplaintsService implements ComplaintsServiceBase{
       await imageReference.putFile(image);
       return imageReference.getDownloadURL();
     } on FirebaseException catch (e) {
-      print("A firebase exception has occured: $e");
+      print("A firebase exception has occurred: $e");
       throw Failure(message: e.message);
     }
   }
-
+  Future<List<String>> getAllLocationsFromComplaints()async{
+    final qs = await _firestore.collection(complaintsCollectionPath).get();
+    return qs.docs.map<String>((p) => p['location'] as String).toSet().toList();
+  }
 }
 

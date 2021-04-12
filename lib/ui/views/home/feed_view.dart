@@ -95,7 +95,7 @@ class _FeedViewState extends State<FeedView> {
                   stream: _postsService.getAllPosts(),
                   builder: (context, complaintsSnapshot) {
                     if (complaintsSnapshot.hasError) {
-                      print("error: " +  complaintsSnapshot.error);
+                      print("error: " +  complaintsSnapshot.error.toString());
                       return Text(
                         "Something went wrong while fetching complaints, please try again later!",
                         textAlign: TextAlign.center,
@@ -126,7 +126,7 @@ class _FeedViewState extends State<FeedView> {
                   stream: _complaintsService.getAllComplaints(),
                   builder: (context, complaintsSnapshot) {
                     if (complaintsSnapshot.hasError) {
-                      print("error: " +  complaintsSnapshot.error);
+                      print("error: " +  complaintsSnapshot.error.toString());
                       return Text(
                         "Something went wrong while fetching complaints, please try again later!",
                         textAlign: TextAlign.center,

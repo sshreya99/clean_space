@@ -3,6 +3,7 @@ import 'package:clean_space/services/complaints_service.dart';
 import 'package:clean_space/services/firestore_service.dart';
 import 'package:clean_space/services/image_services.dart';
 import 'package:clean_space/services/posts_service.dart';
+import 'package:clean_space/services/rank_service.dart';
 import 'package:clean_space/services/user_profile_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,6 +20,7 @@ void setupLocator() {
   locator.registerLazySingleton(() => PostsService());
   locator.registerLazySingleton(() => ComplaintsService());
   locator.registerLazySingleton(() => ImageService());
+  locator.registerLazySingleton(() => RankService());
 
   // Third Party Services
   locator.registerLazySingleton(() => NavigationService());

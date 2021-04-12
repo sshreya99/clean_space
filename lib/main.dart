@@ -4,6 +4,7 @@ import 'package:clean_space/ui/utils/setup_dialog_ui.dart';
 import 'package:clean_space/ui/utils/theme_colors.dart';
 import 'package:clean_space/ui/views/auth/forgot_password_send_verification_screen.dart';
 import 'package:clean_space/ui/views/auth/reset_new_password_screen.dart';
+import 'package:clean_space/ui/views/posts/rank_test.dart';
 import 'package:clean_space/ui/views/profile/profile_screen.dart';
 import 'package:clean_space/ui/views/profile/settings_screen.dart';
 import 'package:clean_space/ui/views/startup/on_boarding_screen.dart';
@@ -38,8 +39,8 @@ class MyApp extends StatelessWidget {
         primaryColor: ThemeColors.primary,
           accentColor: ThemeColors.primary
       ),
-      // home: SettingsScreen(),
-      initialRoute: Routes.startupScreen,
+      home: RankTest(),
+      // initialRoute: Routes.startupScreen,
       onGenerateRoute: Router().onGenerateRoute,
       navigatorKey: StackedService.navigatorKey,
     );

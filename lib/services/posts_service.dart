@@ -54,7 +54,7 @@ class PostsService implements PostsServiceBase{
   @override
   Stream<List<Post>> getAllPostsOf(UserProfile user) {
     return _firestoreService.getDataStreamFromQuerySnapShotStream<Post>(
-        _firestore.collection(postsCollectionPath).where("author", isEqualTo: user.uid).snapshots(),
+        _firestore.collection(postsCollectionPath).where("author", isEqualTo: user.uid).orderBy("createdAt", descending: true).snapshots(),
             (snapshot) => Post.fromSnapshot(snapshot)
     );
   }
@@ -68,7 +68,7 @@ class PostsService implements PostsServiceBase{
   @override
   Stream<List<Post>> getPostsByArea(Location location) {
     return _firestoreService.getDataStreamFromQuerySnapShotStream<Post>(
-        _firestore.collection(postsCollectionPath).where("location", isEqualTo: location.toStringForDatabase()).snapshots(),
+        _firestore.collection(postsCollectionPath).where("location", isEqualTo: location.toStringForDatabase()).orderBy("createdAt", descending: true).snapshots(),
             (snapshot) => Post.fromSnapshot(snapshot)
     );
   }
@@ -95,6 +95,11 @@ class PostsService implements PostsServiceBase{
       print("A firebase exception has occured: $e");
       throw Failure(message: e.message);
     }
+  }
+
+  Future<List<String>> getAllLocationsFromPost()async{
+    final qs = await _firestore.collection(postsCollectionPath).get();
+    return qs.docs.map<String>((p) => p['location'] as String).toSet().toList();
   }
 
 }
