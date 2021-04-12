@@ -27,7 +27,7 @@ class _EditProfileViewState extends State<EditProfileView> {
   final _bioTextEditingController = TextEditingController();
   final _phoneNumberTextEditingController = TextEditingController();
 
-  final _complaintsService = locator<PostsService>();
+  final _postsService = locator<PostsService>();
   final _userProfileService = locator<UserProfileService>();
   bool isPasswordVisible = false;
   bool isLoading = false;
@@ -72,9 +72,12 @@ class _EditProfileViewState extends State<EditProfileView> {
                   child: GestureDetector(
                       onTap: () async {
                         File image = await ImageService.openCameraForImage();
+                        if (image == null) return;
                         setState(() {
                           _image = image;
                         });
+                        Navigator.pop(context);
+
                       },
                       child: Text(
                         "From Camera",
@@ -90,9 +93,11 @@ class _EditProfileViewState extends State<EditProfileView> {
                   child: GestureDetector(
                       onTap: () async {
                         File image = await ImageService.openGalleryForImage();
+                        if (image == null) return;
                         setState(() {
                           _image = image;
                         });
+                        Navigator.pop(context);
                       },
                       child: Text(
                         "From Gallery",
@@ -110,9 +115,17 @@ class _EditProfileViewState extends State<EditProfileView> {
   }
 
   updateProfile() async {
-    imageUrl = await _complaintsService.uploadImageAndGetDownloadableUrl(
-        _image, genImageName(_image, currentUser: widget.userProfile));
-    widget.userProfile.avatarUrl = imageUrl;
+    setState(() {
+      isLoading = true;
+    });
+    if(_image != null){
+      imageUrl = await _postsService.uploadImageAndGetDownloadableUrl(
+          _image, genImageName(_image, currentUser: widget.userProfile));
+
+      // TODO: Delete existing Avatar
+      widget.userProfile.avatarUrl = imageUrl;
+    }
+
     widget.userProfile.username = _usernameTextEditingController.text;
     widget.userProfile.bio = _bioTextEditingController.text;
     widget.userProfile.phone = _phoneNumberTextEditingController.text;
@@ -121,8 +134,6 @@ class _EditProfileViewState extends State<EditProfileView> {
       isLoading = true;
     });
 
-    await _userProfileService.updateAvatarImageInUserProfile(
-        widget.userProfile.uid, imageUrl);
     await _userProfileService.updateUserProfile(widget.userProfile);
     setState(() {
       isLoading = false;
@@ -130,28 +141,36 @@ class _EditProfileViewState extends State<EditProfileView> {
     Navigator.pop(context);
   }
 
+  Widget _buildProfileAvatar() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 70),
+      child: CircleAvatar(
+        backgroundImage: _image != null
+            ? FileImage(_image)
+            : widget.userProfile?.avatarUrl != null
+            ? NetworkImage(widget.userProfile.avatarUrl)
+            : AssetImage("assets/images/avatar_demo.jpeg"),
+
+        // child: Image.asset(),
+        radius: 60,
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    Widget _buildProfileAvatar() {
-      return Padding(
-        padding: const EdgeInsets.only(top: 70),
-        child: CircleAvatar(
-          backgroundImage: _image != null
-              ? FileImage(_image)
-              : widget.userProfile?.avatarUrl != null
-                  ? NetworkImage(widget.userProfile.avatarUrl)
-                  : AssetImage("assets/images/avatar_demo.jpeg"),
-
-          // child: Image.asset(),
-          radius: 60,
-        ),
-      );
-    }
 
     return UnFocusWrapper(
       child: Scaffold(
+        appBar: AppBar(
+          // elevation: 0,
+          backgroundColor: Colors.white,
+          leading: BackButton(color: ThemeColors.primary,),
+          title: Text("Edit Profile", style: TextStyle(color: ThemeColors.primary),),
+        ),
         body: SingleChildScrollView(
-          padding: EdgeInsets.only(left: 20, right: 20, top: 50, bottom: 40),
+          padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 40),
           child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -217,10 +236,10 @@ class _EditProfileViewState extends State<EditProfileView> {
                   ),
                 ),
                 SizedBox(height: 30),
-                isLoading ? CircularProgressIndicator() : CustomRoundedRectangularButton(
+                isLoading ? Center(child: CircularProgressIndicator()) : CustomRoundedRectangularButton(
                   color: ThemeColors.primary,
                   child: Text(
-                    "Submit",
+                    "Update Profile",
                     style: TextStyle(color: Colors.white),
                   ),
                   onPressed: updateProfile,

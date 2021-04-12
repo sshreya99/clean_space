@@ -62,7 +62,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         )
         .toList();
 
-    if(widget.post != null){
+    if (widget.post != null) {
       _selectedCatValue = widget.post.category;
       _selectedAreaValue = widget.post.location.area;
       _commentAboutPlace.text = widget.post.content;
@@ -95,7 +95,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       isComplaint: widget.isComplaint,
     );
 
-      await _postService.createPost(post);
+    await _postService.createPost(post);
 
     setState(() {
       isLoading = false;
@@ -108,7 +108,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     Navigator.pop(context);
   }
 
-  void editPost()async{
+  void editPost() async {
     widget.post.content = _commentAboutPlace.text;
     widget.post.category = _selectedCatValue;
     widget.post.location.area = _selectedAreaValue;
@@ -118,14 +118,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       isLoading = true;
     });
 
-      await _postService.updatePost(widget.post);
+    await _postService.updatePost(widget.post);
 
     setState(() {
       isLoading = false;
     });
     Navigator.pop(context);
-
   }
+
   @override
   Widget build(BuildContext context) {
     return UnFocusWrapper(
@@ -154,7 +154,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     : TextButton(
                         onPressed: widget.post == null ? createPost : editPost,
                         child: Text(
-                          widget.post == null  ? "Post" : "Edit",
+                          widget.post == null ? "Post" : "Edit",
                           style:
                               TextStyle(color: Colors.lightBlue, fontSize: 20),
                         ),
@@ -174,107 +174,58 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   child: Container(
                     height: 200,
                     width: 300,
-                    child:
-                        _image != null ? Image.file(_image) : widget.post?.imageUrl != null ? Image.network(widget.post.imageUrl) : Icon(Icons.image),
+                    child: _image != null
+                        ? Image.file(_image)
+                        : widget.post?.imageUrl != null
+                            ? Image.network(widget.post.imageUrl)
+                            : Icon(Icons.image),
                   ),
                 ),
               ),
-              if(widget.post == null)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () async {
-                        File image = await ImageService.openCameraForImage();
-                        setState(() {
-                          _image = image;
-                        });
-                      },
-                      child: Container(
-                        width: 150,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
+              if (widget.post == null)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          File image = await ImageService.openCameraForImage();
+                          setState(() {
+                            _image = image;
+                          });
+                        },
+                        child: Container(
+                          width: 150,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
                               colors: [
                                 Colors.green,
                                 Colors.blue,
                               ],
                               begin: Alignment.centerLeft,
-                              end: Alignment.centerRight),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              offset: Offset(5, 5),
-                              blurRadius: 10,
-                            )
-                          ],
-                        ),
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Icon(
-                                Icons.camera_alt,
-                                color: Colors.white,
-                              ),
-                              Text(
-                                'Open Camera',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
+                              end: Alignment.centerRight,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                offset: Offset(5, 5),
+                                blurRadius: 10,
+                              )
                             ],
                           ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    GestureDetector(
-                      onTap: () async {
-                        File image = await ImageService.openGalleryForImage();
-                        setState(() {
-                          _image = image;
-                        });
-                      },
-                      child: Container(
-                        width: 150,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              colors: [
-                                Colors.green,
-                                Colors.blue,
-                              ],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              offset: Offset(5, 5),
-                              blurRadius: 10,
-                            )
-                          ],
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
                           child: Center(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 Icon(
-                                  Icons.image,
+                                  Icons.camera_alt,
                                   color: Colors.white,
                                 ),
                                 Text(
-                                  'Open Gallery',
+                                  'Open Camera',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 14,
@@ -286,10 +237,64 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                      SizedBox(
+                        width: 20,
+                      ),
+                      GestureDetector(
+                        onTap: () async {
+                          File image = await ImageService.openGalleryForImage();
+                          setState(() {
+                            _image = image;
+                          });
+                        },
+                        child: Container(
+                          width: 150,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                colors: [
+                                  Colors.green,
+                                  Colors.blue,
+                                ],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight),
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                offset: Offset(5, 5),
+                                blurRadius: 10,
+                              )
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Icon(
+                                    Icons.image,
+                                    color: Colors.white,
+                                  ),
+                                  Text(
+                                    'Open Gallery',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
               SizedBox(height: 20),
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 20),

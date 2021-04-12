@@ -31,10 +31,9 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
-  Future<void> fetchUserProfile()async{
+  Future<void> fetchUserProfile() async {
     _userProfile = await _authenticationService.currentUserProfile;
   }
-
 
   _showBottomSheet() {
     showModalBottomSheet(
@@ -56,7 +55,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: GestureDetector(
                       onTap: () {
                         Navigator.pushReplacementNamed(
-                            context, Routes.createPostScreen, arguments: CreatePostScreenArguments(isComplaint: true),);
+                          context,
+                          Routes.createPostScreen,
+                          arguments:
+                              CreatePostScreenArguments(isComplaint: true),
+                        );
                       },
                       child: Text(
                         "Add Complaint",
@@ -72,7 +75,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: GestureDetector(
                       onTap: () {
                         Navigator.pushReplacementNamed(
-                            context, Routes.createPostScreen);
+                          context,
+                          Routes.createPostScreen,
+                        );
                       },
                       child: Text(
                         "Add Post",
@@ -93,79 +98,93 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: Center(
           child: FutureBuilder<UserProfile>(
-              future: _authenticationService.currentUserProfile,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) return [
+            future: _authenticationService.currentUserProfile,
+            builder: (context, snapshot) {
+              if (snapshot.hasData)
+                return [
                   FeedView(),
                   RankView(),
                   FeedView(),
                   FutureBuilder<UserProfile>(
-                    future: _authenticationService.currentUserProfile,
-                    builder: (context, snapshot) {
-                      if(!snapshot.hasData) return Center(child: CircularProgressIndicator());
-                      return ProfileScreen(userProfile: snapshot.data, isCurrentProfile: true,);
-                    }
-                  ),
+                      future: _authenticationService.currentUserProfile,
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData)
+                          return Center(child: CircularProgressIndicator());
+                        return ProfileScreen(
+                          userProfile: snapshot.data,
+                          isCurrentProfile: true,
+                        );
+                      }),
                 ][_currentIndex];
-                return Text("Not Logged in");
-              }),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Container(
-        height: 60,
-        child: FittedBox(
-          child: FloatingActionButton(
-            onPressed: _showBottomSheet,
-            child: Icon(
-              Icons.add,
-            ),
-            backgroundColor: ThemeColors.primary,
-            elevation: 15,
+              return Text("Not Logged in");
+            },
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.white.withOpacity(0.1),
-                spreadRadius: 1,
-              )
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showBottomSheet,
+        child: Container(
+          height: double.infinity,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              colors: [
+                Color(0xff678E26),
+                ThemeColors.primary,
+              ],
+              begin: Alignment.bottomLeft,
+              end: Alignment.topRight,
+            ),
+          ),
+          child: Icon(
+            Icons.add,
+          ),
+        ),
+        backgroundColor: ThemeColors.primary,
+        elevation: 15,
+      ),
+      bottomNavigationBar: BottomAppBar(
+        shape: CircularNotchedRectangle(),
+        color: Colors.white,
+        elevation: 20,
+        notchMargin: 8,
+        clipBehavior: Clip.hardEdge,
+        child: Container(
+          height: 60,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              buildNavBarItem(Icons.home, 0),
+              buildNavBarItem(Icons.emoji_events, 1),
+              buildNavBarItem(null, -1),
+              buildNavBarItem(Icons.notifications, 2),
+              buildNavBarItem(Icons.person, 3),
             ],
-            color: Colors.white.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(15)),
-        child: Row(
-          children: [
-            buildNavBarItem(Icons.home, 0),
-            buildNavBarItem(Icons.search, 1),
-            buildNavBarItem(null, -1),
-            buildNavBarItem(Icons.notifications, 2),
-            buildNavBarItem(Icons.person, 3),
-          ],
+          ),
         ),
       ),
     );
   }
 
   Widget buildNavBarItem(IconData icon, int index) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _currentIndex = index;
-        });
-      },
-      child: Container(
-        width: MediaQuery.of(context).size.width / 5,
-        height: 45,
-        child: icon != null
-            ? Icon(
-                icon,
-                size: 25,
-                color: index == _currentIndex ? Colors.black : Colors.grey[700],
-              )
-            : Container(),
-      ),
-    );
+    return icon != null
+        ? IconButton(
+            onPressed: () {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            icon: Icon(
+              icon,
+              size: 25,
+              color: index == _currentIndex
+                  ? ThemeColors.primary
+                  : Colors.grey[700],
+            ),
+          )
+        : Container();
   }
 }

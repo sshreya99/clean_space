@@ -27,19 +27,12 @@ class _AreaFeedViewState extends State<AreaFeedView> {
           child: Scaffold(
         appBar: AppBar(
           title: Text(
-            "Area Posts",
+            widget.location.area,
             style: TextStyle(color: ThemeColors.primary),
           ),
           backgroundColor: Colors.white,
+          leading: BackButton(color: ThemeColors.primary,),
           actionsIconTheme: IconThemeData(color: ThemeColors.primary),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.clear),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            )
-          ],
           bottom: TabBar(
             indicatorColor: ThemeColors.primary,
             tabs: [

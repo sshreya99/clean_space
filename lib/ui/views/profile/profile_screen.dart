@@ -51,249 +51,251 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: NestedScrollView(
-        headerSliverBuilder: (context, _) {
-          return [
-            SliverList(
-              delegate: SliverChildListDelegate(
-                [
-                  Stack(
-                    alignment: Alignment.topCenter,
-                    children: [
-                      ImageFiltered(
-                        imageFilter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
-                        child: Container(
-                          height: 150,
-                          decoration: BoxDecoration(
-                            color: Colors.teal,
-                            image: DecorationImage(
-                              image: AssetImage("assets/images/demo_post.png"),
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                        ),
-                      ),
-                      AppBar(
-                        elevation: 0,
-                        leading: widget.isCurrentProfile ?  null : BackButton(),
-                        automaticallyImplyLeading: false,
-                        backgroundColor: Colors.transparent,
-                        actions: widget.isCurrentProfile
-                            ? [
-                                IconButton(
-                                  icon: Icon(Icons.settings),
-                                  onPressed: () => Navigator.pushNamed(
-                                    context,
-                                    Routes.settingsScreen,
-                                    arguments: SettingsScreenArguments(
-                                      userProfile: widget.userProfile,
-                                    )
-                                  ),
-                                ),
-                              ]
-                            : [],
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 130),
-                        // height: double.infinity,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20),
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(height: 90),
-                            Text(widget?.userProfile?.username ?? "",
-                                style: TextStyle(fontSize: 16)),
-                            SizedBox(height: 5),
-                            Text(widget?.userProfile?.location?.area ?? "",
-                                style: TextStyle(
-                                    fontSize: 10, color: Colors.grey)),
-                            SizedBox(height: 20),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 40),
-                              child: Text(
-                                widget.userProfile.bio ?? "",
-                                style: TextStyle(fontSize: 13),
-                                textAlign: TextAlign.center,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: NestedScrollView(
+          headerSliverBuilder: (context, _) {
+            return [
+              SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    Stack(
+                      alignment: Alignment.topCenter,
+                      children: [
+                        ImageFiltered(
+                          imageFilter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
+                          child: Container(
+                            height: 150,
+                            decoration: BoxDecoration(
+                              color: Colors.teal,
+                              image: DecorationImage(
+                                image: AssetImage("assets/images/demo_post.png"),
+                                fit: BoxFit.fill,
                               ),
                             ),
-                            SizedBox(height: 40),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 40),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  MaterialButton(
-                                    onPressed: () {},
-                                    shape: CircleBorder(),
-                                    minWidth: 50,
-                                    height: 50,
-                                    color: Colors.white,
-                                    child: Icon(
-                                      Icons.chat,
-                                      color: ThemeColors.primary,
+                          ),
+                        ),
+                        AppBar(
+                          elevation: 0,
+                          leading: widget.isCurrentProfile ?  null : BackButton(),
+                          automaticallyImplyLeading: false,
+                          backgroundColor: Colors.transparent,
+                          actions: widget.isCurrentProfile
+                              ? [
+                                  IconButton(
+                                    icon: Icon(Icons.settings),
+                                    onPressed: () => Navigator.pushNamed(
+                                      context,
+                                      Routes.settingsScreen,
+                                      arguments: SettingsScreenArguments(
+                                        userProfile: widget.userProfile,
+                                      )
                                     ),
-                                    elevation: 3,
                                   ),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: MaterialButton(
+                                ]
+                              : [],
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 130),
+                          // height: double.infinity,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(height: 90),
+                              Text(widget?.userProfile?.username ?? "",
+                                  style: TextStyle(fontSize: 16)),
+                              SizedBox(height: 5),
+                              Text(widget?.userProfile?.location?.area ?? "",
+                                  style: TextStyle(
+                                      fontSize: 10, color: Colors.grey)),
+                              SizedBox(height: 20),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 40),
+                                child: Text(
+                                  widget.userProfile.bio ?? "",
+                                  style: TextStyle(fontSize: 13),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              SizedBox(height: 40),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 40),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    MaterialButton(
                                       onPressed: () {},
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(50),
-                                      ),
+                                      shape: CircleBorder(),
+                                      minWidth: 50,
                                       height: 50,
-                                      color: ThemeColors.primary,
-                                      child: Text(
-                                        "Follow",
-                                        style: TextStyle(color: Colors.white),
+                                      color: Colors.white,
+                                      child: Icon(
+                                        Icons.chat,
+                                        color: ThemeColors.primary,
                                       ),
                                       elevation: 3,
                                     ),
-                                  ),
-                                  SizedBox(width: 10),
-                                  MaterialButton(
-                                    onPressed: () {},
-                                    shape: CircleBorder(),
-                                    minWidth: 50,
-                                    height: 50,
-                                    color: Colors.white,
-                                    child: Icon(
-                                      Icons.share,
-                                      color: ThemeColors.primary,
+                                    SizedBox(width: 10),
+                                    Expanded(
+                                      child: MaterialButton(
+                                        onPressed: () {},
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(50),
+                                        ),
+                                        height: 50,
+                                        color: ThemeColors.primary,
+                                        child: Text(
+                                          "Follow",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        elevation: 3,
+                                      ),
                                     ),
-                                    elevation: 3,
-                                  ),
-                                ],
+                                    SizedBox(width: 10),
+                                    MaterialButton(
+                                      onPressed: () {},
+                                      shape: CircleBorder(),
+                                      minWidth: 50,
+                                      height: 50,
+                                      color: Colors.white,
+                                      child: Icon(
+                                        Icons.share,
+                                        color: ThemeColors.primary,
+                                      ),
+                                      elevation: 3,
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 40),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: Divider(color: Colors.grey),
-                            ),
-                          ],
+                              SizedBox(height: 40),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                child: Divider(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ),
+                        _buildProfileAvatar(),
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            ];
+          },
+          body: SafeArea(
+            child: Column(
+              children: [
+                TabBar(
+                  controller: controller,
+                  labelColor: Colors.black,
+                  indicatorColor: ThemeColors.primary,
+                  tabs: [
+                    Tab(
+                      child: Text(
+                        "Posts",
+                        style: TextStyle(
+                          fontWeight: currentTabIndex == 0
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                         ),
                       ),
-                      _buildProfileAvatar(),
-                    ],
-                  ),
-                ],
-              ),
-            )
-          ];
-        },
-        body: SafeArea(
-          child: Column(
-            children: [
-              TabBar(
-                controller: controller,
-                labelColor: Colors.black,
-                indicatorColor: ThemeColors.primary,
-                tabs: [
-                  Tab(
-                    child: Text(
-                      "Posts",
-                      style: TextStyle(
-                        fontWeight: currentTabIndex == 0
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
                     ),
-                  ),
-                  Tab(
-                    child: Text(
-                      "Complaints",
-                      style: TextStyle(
-                        fontWeight: currentTabIndex == 1
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: TabBarView(
-                  controller: controller,
-                  children: [
-                    Center(
-                      child: StreamBuilder<List<Post>>(
-                        stream: _postsService.getAllPostsOf(widget.userProfile),
-                        builder: (context, postsSnapshot) {
-                          if (postsSnapshot.hasError) {
-                            print("error: " + postsSnapshot.error.toString());
-                            return Text(
-                              "Something went wrong while fetching Posts, please try again later!",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.red),
-                            );
-                          }
-                          if (!postsSnapshot.hasData)
-                            return Center(child: CircularProgressIndicator());
-                          List<Post> posts = postsSnapshot.data;
-                          if (posts.isEmpty) return Text("No posts found!");
-                          return GridView.count(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 20),
-                            crossAxisCount: 3,
-                            mainAxisSpacing: 10,
-                            crossAxisSpacing: 10,
-                            children: posts
-                                .map((post) => PostGridItem(post))
-                                .toList(),
-                          );
-                        },
-                      ),
-                    ),
-                    Center(
-                      child: StreamBuilder<List<Post>>(
-                        stream: _postsService
-                            .getAllPostsOf(widget.userProfile, isComplaint: true),
-                        builder: (context, complaintsSnapshot) {
-                          if (complaintsSnapshot.hasError) {
-                            print("error: " + complaintsSnapshot.error.toString());
-                            return Text(
-                              "Something went wrong while fetching complaints, please try again later!",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.red),
-                            );
-                          }
-                          if (!complaintsSnapshot.hasData)
-                            return Center(child: CircularProgressIndicator());
-                          List<Post> complaints = complaintsSnapshot.data;
-
-                          if (complaints.isEmpty)
-                            return Text("No complaints found!");
-                          return GridView.count(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 20,
-                            ),
-                            crossAxisCount: 3,
-                            mainAxisSpacing: 10,
-                            crossAxisSpacing: 10,
-                            children: complaints
-                                .map((complaint) => PostGridItem(complaint))
-                                .toList(),
-                          );
-                        },
+                    Tab(
+                      child: Text(
+                        "Complaints",
+                        style: TextStyle(
+                          fontWeight: currentTabIndex == 1
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                        ),
                       ),
                     ),
                   ],
                 ),
-              ),
-            ],
+                Expanded(
+                  child: TabBarView(
+                    controller: controller,
+                    children: [
+                      Center(
+                        child: StreamBuilder<List<Post>>(
+                          stream: _postsService.getAllPostsOf(widget.userProfile),
+                          builder: (context, postsSnapshot) {
+                            if (postsSnapshot.hasError) {
+                              print("error: " + postsSnapshot.error.toString());
+                              return Text(
+                                "Something went wrong while fetching Posts, please try again later!",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.red),
+                              );
+                            }
+                            if (!postsSnapshot.hasData)
+                              return Center(child: CircularProgressIndicator());
+                            List<Post> posts = postsSnapshot.data;
+                            if (posts.isEmpty) return Text("No posts found!");
+                            return GridView.count(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 20),
+                              crossAxisCount: 3,
+                              mainAxisSpacing: 10,
+                              crossAxisSpacing: 10,
+                              children: posts
+                                  .map((post) => PostGridItem(post))
+                                  .toList(),
+                            );
+                          },
+                        ),
+                      ),
+                      Center(
+                        child: StreamBuilder<List<Post>>(
+                          stream: _postsService
+                              .getAllPostsOf(widget.userProfile, isComplaint: true),
+                          builder: (context, complaintsSnapshot) {
+                            if (complaintsSnapshot.hasError) {
+                              print("error: " + complaintsSnapshot.error.toString());
+                              return Text(
+                                "Something went wrong while fetching complaints, please try again later!",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.red),
+                              );
+                            }
+                            if (!complaintsSnapshot.hasData)
+                              return Center(child: CircularProgressIndicator());
+                            List<Post> complaints = complaintsSnapshot.data;
+
+                            if (complaints.isEmpty)
+                              return Text("No complaints found!");
+                            return GridView.count(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 20,
+                              ),
+                              crossAxisCount: 3,
+                              mainAxisSpacing: 10,
+                              crossAxisSpacing: 10,
+                              children: complaints
+                                  .map((complaint) => PostGridItem(complaint))
+                                  .toList(),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -15,9 +15,8 @@ class FeedView extends StatefulWidget {
 
 class _FeedViewState extends State<FeedView> {
   final AuthenticationService _authenticationService =
-  locator<AuthenticationService>();
-  final PostsService _postsService =
-  locator<PostsService>();
+      locator<AuthenticationService>();
+  final PostsService _postsService = locator<PostsService>();
 
   @override
   Widget build(BuildContext context) {
@@ -25,134 +24,134 @@ class _FeedViewState extends State<FeedView> {
       length: 2,
       child: UnFocusWrapper(
         child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            actionsIconTheme: IconThemeData(
-              color: ThemeColors.primary
-            ),
-
-            actions: [
-              IconButton(
-                icon: Icon(Icons.exit_to_app),
-                onPressed: () {
-                  // Dialog show
-                  // logout
-                  showDialog(
-                    context: context,
-                    child: AlertDialog(
-                      title: Text("Logout"),
-                      content: Text("Are you sure you want to logout?"),
-                      actions: [
-                        FlatButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text("Cancel"),
-                        ),
-                        FlatButton(
-                          onPressed: () async {
-                            //  logout
-                            await _authenticationService.signOut();
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              Routes.startupScreen,
-                                (route) => route == null
-                            );
-                          },
-                          child: Text("Yes"),
-                        ),
-                      ],
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              actionsIconTheme: IconThemeData(color: ThemeColors.primary),
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.exit_to_app),
+                  onPressed: () {
+                    // Dialog show
+                    // logout
+                    showDialog(
+                      context: context,
+                      child: AlertDialog(
+                        title: Text("Logout"),
+                        content: Text("Are you sure you want to logout?"),
+                        actions: [
+                          FlatButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text("Cancel"),
+                          ),
+                          FlatButton(
+                            onPressed: () async {
+                              //  logout
+                              await _authenticationService.signOut();
+                              Navigator.pushNamedAndRemoveUntil(
+                                  context,
+                                  Routes.startupScreen,
+                                  (route) => route == null);
+                            },
+                            child: Text("Yes"),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                )
+              ],
+              bottom: TabBar(
+                indicatorColor: ThemeColors.primary,
+                tabs: [
+                  Tab(
+                    child: Text(
+                      "Posts",
+                      style: TextStyle(
+                        color: ThemeColors.primary,
+                      ),
                     ),
-                  );
-                },
-              )
-            ],
-            bottom: TabBar(
-              indicatorColor: ThemeColors.primary,
-              tabs: [
-                Tab(
-                  child: Text("Posts", style: TextStyle(
-                    color: ThemeColors.primary,
-                  ),),
+                  ),
+                  Tab(
+                    child: Text(
+                      "Complaints",
+                      style: TextStyle(
+                        color: ThemeColors.primary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              title: Text(
+                "Clean Space",
+                style: TextStyle(
+                  color: ThemeColors.primary,
+                ),
+              ),
+            ),
+            body: TabBarView(
+              children: [
+                Center(
+                  child: StreamBuilder(
+                    stream: _postsService.getAllPosts(),
+                    builder: (context, complaintsSnapshot) {
+                      if (complaintsSnapshot.hasError) {
+                        print("error: " + complaintsSnapshot.error.toString());
+                        return Text(
+                          "Something went wrong while fetching complaints, please try again later!",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.red),
+                        );
+                      }
+                      if (!complaintsSnapshot.hasData)
+                        return Center(child: CircularProgressIndicator());
+                      List<Post> posts = complaintsSnapshot.data;
 
-                ),Tab(
-                  child: Text("Complaints", style: TextStyle(
-                    color: ThemeColors.primary,
-                  ),),
+                      if (posts.isEmpty) return Text("No posts found!");
+                      return ListView(
+                        // padding: EdgeInsets.symmetric(
+                        //   horizontal: 20,
+                        //   vertical: 20,
+                        // ),
+
+                        children:
+                            posts.map((post) => FeedItem(post: post)).toList(),
+                      );
+                    },
+                  ),
+                ),
+                Center(
+                  child: StreamBuilder(
+                    stream: _postsService.getAllPosts(isComplaint: true),
+                    builder: (context, complaintsSnapshot) {
+                      if (complaintsSnapshot.hasError) {
+                        print("error: " + complaintsSnapshot.error.toString());
+                        return Text(
+                          "Something went wrong while fetching complaints, please try again later!",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.red),
+                        );
+                      }
+                      if (!complaintsSnapshot.hasData)
+                        return Center(child: CircularProgressIndicator());
+                      List<Post> posts = complaintsSnapshot.data;
+
+                      if (posts.isEmpty) return Text("No complaints found!");
+                      return ListView(
+                        // padding: EdgeInsets.symmetric(
+                        //   horizontal: 20,
+                        //   vertical: 20,
+                        // ),
+
+                        children:
+                            posts.map((post) => FeedItem(post: post)).toList(),
+                      );
+                    },
+                  ),
                 ),
               ],
-            ),
-            title: Text("Clean Space", style: TextStyle(
-              color: ThemeColors.primary,
-            ),),
-          ),
-          body: TabBarView(
-            children: [
-              Center(
-                child: StreamBuilder(
-                  stream: _postsService.getAllPosts(),
-                  builder: (context, complaintsSnapshot) {
-                    if (complaintsSnapshot.hasError) {
-                      print("error: " +  complaintsSnapshot.error.toString());
-                      return Text(
-                        "Something went wrong while fetching complaints, please try again later!",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.red),
-                      );
-                    }
-                    if (!complaintsSnapshot.hasData)
-                      return Center(child: CircularProgressIndicator());
-                    List<Post> posts = complaintsSnapshot.data;
-
-                    if(posts.isEmpty)
-                      return Text("No posts found!");
-                    return ListView(
-                      // padding: EdgeInsets.symmetric(
-                      //   horizontal: 20,
-                      //   vertical: 20,
-                      // ),
-
-                      children: posts
-                          .map((post) => FeedItem(post: post))
-                          .toList(),
-                    );
-                  },
-                ),
-              ),
-              Center(
-                child: StreamBuilder(
-                  stream: _postsService.getAllPosts(isComplaint: true),
-                  builder: (context, complaintsSnapshot) {
-                    if (complaintsSnapshot.hasError) {
-                      print("error: " +  complaintsSnapshot.error.toString());
-                      return Text(
-                        "Something went wrong while fetching complaints, please try again later!",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.red),
-                      );
-                    }
-                    if (!complaintsSnapshot.hasData)
-                      return Center(child: CircularProgressIndicator());
-                    List<Post> posts = complaintsSnapshot.data;
-
-                    if(posts.isEmpty)
-                      return Text("No complaints found!");
-                    return ListView(
-                      // padding: EdgeInsets.symmetric(
-                      //   horizontal: 20,
-                      //   vertical: 20,
-                      // ),
-
-                      children: posts
-                          .map((post) => FeedItem(post: post))
-                          .toList(),
-                    );
-                  },
-                ),
-              ),
-            ],
-          )
-        ),
+            )),
       ),
     );
   }
