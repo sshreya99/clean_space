@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:clean_space/models/area.dart';
+import 'package:clean_space/models/user_profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Post {
@@ -68,5 +69,25 @@ class Post {
       "createdAt": createdAt?.toIso8601String(),
       "updatedAt": updatedAt?.toIso8601String(),
     };
+  }
+}
+
+class PostLike{
+  String id;
+  String username;
+  String email;
+  String avatarUrl;
+
+  PostLike({this.id, this.username, this.email, this.avatarUrl});
+
+  factory PostLike.fromMap(Map<String, dynamic> map, String id){
+    if(map == null) return null;
+
+    return PostLike(
+      id: id,
+      username: map['username'] as String,
+      email:  map['email'] as String,
+      avatarUrl: map['avatarUrl'] as String,
+    );
   }
 }

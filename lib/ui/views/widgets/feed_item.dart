@@ -123,25 +123,19 @@ class _FeedItemState extends State<FeedItem> {
               children: [
                 Row(
                   children: [
+                    PostLikeWidget(widget.post),
+                    SizedBox(width: 20),
                     Row(
                       children: [
-                        Icon(Icons.thumb_up),
+                        Icon(Icons.comment),
                         SizedBox(width: 10),
-                        Text("125k"),
-                        SizedBox(width: 20),
-                        Row(
-                          children: [
-                            Icon(Icons.comment),
-                            SizedBox(width: 10),
-                            Text("126k"),
-                          ],
-                        ),
-                        SizedBox(width: 20),
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.share),
-                        ),
+                        Text("126k"),
                       ],
+                    ),
+                    SizedBox(width: 20),
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.share),
                     ),
                   ],
                 ),
@@ -224,5 +218,55 @@ class _FeedItemState extends State<FeedItem> {
         ),
       );
     }
+  }
+}
+
+class PostLikeWidget extends StatefulWidget {
+  final Post post;
+
+  PostLikeWidget(this.post);
+
+  @override
+  _PostLikeWidgetState createState() => _PostLikeWidgetState();
+}
+
+class _PostLikeWidgetState extends State<PostLikeWidget> {
+  UserProfile currentUserProfile;
+  final PostsService _postsService = locator<PostsService>();
+  final AuthenticationService _authenticationService = locator<AuthenticationService>();
+
+  @override
+  void initState() {
+    fetchCurrentUserProfile();
+    super.initState();
+  }
+  void fetchCurrentUserProfile() async{
+    currentUserProfile = await _authenticationService.currentUserProfile;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return StreamBuilder<List<PostLike>>(
+        stream: _postsService.getLikesOf(widget.post),
+        builder: (context, snapshot) {
+          bool hasCurrentUserLiked = snapshot?.data?.map((pl) => pl.id)?.contains(_authenticationService.currentFirebaseUser.uid) ?? false;
+          return Row(
+            children: [
+              IconButton(
+                icon: hasCurrentUserLiked ? Icon(Icons.favorite, color: Colors.red,) : Icon(Icons.favorite_border),
+                onPressed: () async {
+                  if(currentUserProfile == null) return;
+                  if(hasCurrentUserLiked){
+                   return await _postsService.removeLike(widget.post, currentUserProfile);
+                  }
+                  await _postsService.addLike(widget.post, currentUserProfile);
+                },
+              ),
+              // SizedBox(width: 5),
+              Text(snapshot?.data?.length?.toString() ?? "0")
+            ],
+          );
+        });
   }
 }

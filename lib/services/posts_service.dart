@@ -101,4 +101,32 @@ class PostsService implements PostsServiceBase{
     final qs = await _firestore.collection(postsCollectionPath).get();
     return qs.docs.map<String>((p) => p['location'] as String).toSet().toList();
   }
+
+  Future<void> addLike(Post post, UserProfile userProfile) {
+    return _firestore.collection(postsCollectionPath).doc(post.id).collection("likes").doc(userProfile.uid).set(userProfile.toMapForLikes());
+  }
+
+  Future<void> removeLike (Post post, UserProfile userProfile){
+    return _firestore.collection(postsCollectionPath).doc(post.id).collection("likes").doc(userProfile.uid).delete();
+  }
+
+  Stream<List<PostLike>> getLikesOf(Post post){
+   return _firestoreService.getDataStreamFromQuerySnapShotStream<PostLike>(
+       _firestore.collection(postsCollectionPath).doc(post.id).collection("likes").snapshots(),
+            (snapshot) => PostLike.fromMap(snapshot.data(), snapshot.id)
+    );
+  }
+
+  // Future<void> addComment(Post post, UserProfile userProfile) {
+  //
+  // }
+  //
+  // Future<void> removeComment(Post post, UserProfile userProfile){
+  // }
+  //
+  //
+  // Stream<List<PostLike>> getCommentsOf(Post post){
+  //
+  // }
+
 }

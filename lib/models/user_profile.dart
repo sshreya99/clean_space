@@ -66,4 +66,11 @@ class UserProfile {
       'updatedAt': this.updatedAt?.toIso8601String(),
     };
   }
+  Map<String, dynamic> toMapForLikes() {
+    return <String, dynamic>{
+      'username': this.username,
+      'email': this.email,
+      'avatarUrl': this.avatarUrl,
+    };
+  }
 }
