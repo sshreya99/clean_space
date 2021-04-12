@@ -77,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       ),
                       AppBar(
                         elevation: 0,
-                        leading: widget.isCurrentProfile ? null : BackButton(),
+                        leading: widget.isCurrentProfile ?  null : BackButton(),
                         automaticallyImplyLeading: false,
                         backgroundColor: Colors.transparent,
                         actions: widget.isCurrentProfile
@@ -87,6 +87,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   onPressed: () => Navigator.pushNamed(
                                     context,
                                     Routes.settingsScreen,
+                                    arguments: SettingsScreenArguments(
+                                      userProfile: widget.userProfile,
+                                    )
                                   ),
                                 ),
                               ]

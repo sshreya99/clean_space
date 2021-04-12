@@ -30,7 +30,6 @@ class MyApp extends StatelessWidget {
         primaryColor: ThemeColors.primary,
           accentColor: ThemeColors.primary
       ),
-      // home: RankTest(),
       initialRoute: Routes.startupScreen,
       onGenerateRoute: Router().onGenerateRoute,
       navigatorKey: StackedService.navigatorKey,

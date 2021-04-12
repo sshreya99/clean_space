@@ -2,9 +2,11 @@ import 'package:clean_space/app/locator.dart';
 import 'package:clean_space/app/router.gr.dart';
 import 'package:clean_space/models/user_profile.dart';
 import 'package:clean_space/services/authentication_service.dart';
+import 'package:clean_space/ui/utils/theme_colors.dart';
 import 'package:clean_space/ui/views/auth/login_screen.dart';
 import 'package:clean_space/ui/views/home/feed_view.dart';
 import 'package:clean_space/ui/views/profile/profile_screen.dart';
+import 'package:clean_space/ui/views/rank/rank_view.dart';
 import 'package:clean_space/ui/views/startup/startup_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -95,13 +97,13 @@ class _HomeScreenState extends State<HomeScreen> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) return [
                   FeedView(),
-                  FeedView(),
+                  RankView(),
                   FeedView(),
                   FutureBuilder<UserProfile>(
                     future: _authenticationService.currentUserProfile,
                     builder: (context, snapshot) {
                       if(!snapshot.hasData) return Center(child: CircularProgressIndicator());
-                      return ProfileScreen(userProfile: snapshot.data);
+                      return ProfileScreen(userProfile: snapshot.data, isCurrentProfile: true,);
                     }
                   ),
                 ][_currentIndex];
@@ -118,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Icon(
               Icons.add,
             ),
-            backgroundColor: Colors.grey[900],
+            backgroundColor: ThemeColors.primary,
             elevation: 15,
           ),
         ),
@@ -127,11 +129,11 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.1),
+                color: Colors.white.withOpacity(0.1),
                 spreadRadius: 1,
               )
             ],
-            color: Colors.grey.withOpacity(0.2),
+            color: Colors.white.withOpacity(0.2),
             borderRadius: BorderRadius.circular(15)),
         child: Row(
           children: [

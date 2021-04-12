@@ -159,15 +159,14 @@ class _FeedItemState extends State<FeedItem> {
             ),
           ),
           SizedBox(height: 10),
-          if (!widget.isSinglePost)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: CustomTextFormField(
-                borderColor: Colors.black12,
-                hintText: "Type your comment...",
-                borderRadius: BorderRadius.circular(50),
-              ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: CustomTextFormField(
+              borderColor: Colors.black12,
+              hintText: "Type your comment...",
+              borderRadius: BorderRadius.circular(50),
             ),
+          ),
         ],
       ),
     );
@@ -233,32 +232,42 @@ class PostLikeWidget extends StatefulWidget {
 class _PostLikeWidgetState extends State<PostLikeWidget> {
   UserProfile currentUserProfile;
   final PostsService _postsService = locator<PostsService>();
-  final AuthenticationService _authenticationService = locator<AuthenticationService>();
+  final AuthenticationService _authenticationService =
+      locator<AuthenticationService>();
 
   @override
   void initState() {
     fetchCurrentUserProfile();
     super.initState();
   }
-  void fetchCurrentUserProfile() async{
+
+  void fetchCurrentUserProfile() async {
     currentUserProfile = await _authenticationService.currentUserProfile;
   }
 
   @override
   Widget build(BuildContext context) {
-
     return StreamBuilder<List<PostLike>>(
         stream: _postsService.getLikesOf(widget.post),
         builder: (context, snapshot) {
-          bool hasCurrentUserLiked = snapshot?.data?.map((pl) => pl.id)?.contains(_authenticationService.currentFirebaseUser.uid) ?? false;
+          bool hasCurrentUserLiked = snapshot?.data
+                  ?.map((pl) => pl.id)
+                  ?.contains(_authenticationService.currentFirebaseUser.uid) ??
+              false;
           return Row(
             children: [
               IconButton(
-                icon: hasCurrentUserLiked ? Icon(Icons.favorite, color: Colors.red,) : Icon(Icons.favorite_border),
+                icon: hasCurrentUserLiked
+                    ? Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                      )
+                    : Icon(Icons.favorite_border),
                 onPressed: () async {
-                  if(currentUserProfile == null) return;
-                  if(hasCurrentUserLiked){
-                   return await _postsService.removeLike(widget.post, currentUserProfile);
+                  if (currentUserProfile == null) return;
+                  if (hasCurrentUserLiked) {
+                    return await _postsService.removeLike(
+                        widget.post, currentUserProfile);
                   }
                   await _postsService.addLike(widget.post, currentUserProfile);
                 },

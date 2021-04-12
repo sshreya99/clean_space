@@ -105,7 +105,7 @@ class _FeedViewState extends State<FeedView> {
                     List<Post> posts = complaintsSnapshot.data;
 
                     if(posts.isEmpty)
-                      return Text("No complaints found!");
+                      return Text("No posts found!");
                     return ListView(
                       // padding: EdgeInsets.symmetric(
                       //   horizontal: 20,
