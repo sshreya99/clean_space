@@ -1,13 +1,10 @@
 import 'dart:ui';
-
 import 'package:clean_space/app/locator.dart';
 import 'package:clean_space/app/router.gr.dart';
 import 'package:clean_space/models/post.dart';
 import 'package:clean_space/models/user_profile.dart';
-import 'package:clean_space/services/complaints_service.dart';
 import 'package:clean_space/services/posts_service.dart';
 import 'package:clean_space/ui/utils/theme_colors.dart';
-import 'package:clean_space/ui/views/widgets/feed_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -27,7 +24,6 @@ class _ProfileScreenState extends State<ProfileScreen>
   int currentTabIndex = 0;
 
   final PostsService _postsService = locator<PostsService>();
-  final ComplaintsService _complaintsService = locator<ComplaintsService>();
 
   @override
   void initState() {
@@ -77,15 +73,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                               fit: BoxFit.fill,
                             ),
                           ),
-                          // child: ClipRRect(
-                          //   child: BackdropFilter(
-                          //     filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-                          //     child: new Container(
-                          //       height: 150,
-                          //       color: Colors.transparent,
-                          //     ),
-                          //   ),
-                          // ),
                         ),
                       ),
                       AppBar(
@@ -268,8 +255,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                     ),
                     Center(
                       child: StreamBuilder<List<Post>>(
-                        stream: _complaintsService
-                            .getAllComplaintsOf(widget.userProfile),
+                        stream: _postsService
+                            .getAllPostsOf(widget.userProfile, isComplaint: true),
                         builder: (context, complaintsSnapshot) {
                           if (complaintsSnapshot.hasError) {
                             print("error: " + complaintsSnapshot.error.toString());

@@ -1,11 +1,9 @@
 import 'dart:io';
-
 import 'package:clean_space/app/locator.dart';
 import 'package:clean_space/models/area.dart';
 import 'package:clean_space/models/post.dart';
 import 'package:clean_space/models/user_profile.dart';
 import 'package:clean_space/services/authentication_service.dart';
-import 'package:clean_space/services/complaints_service.dart';
 import 'package:clean_space/services/posts_service.dart';
 import 'package:clean_space/ui/utils/constants.dart';
 import 'package:clean_space/ui/views/auth/widgets/custom_text_form_field.dart';
@@ -15,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:clean_space/services/image_services.dart';
 import 'package:clean_space/app/router.gr.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
-import 'package:clean_space/models/post.dart';
 
 class CreatePostScreen extends StatefulWidget {
   final bool isComplaint;
@@ -28,7 +25,6 @@ class CreatePostScreen extends StatefulWidget {
 }
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
-  ComplaintsService _complaintsService = locator<ComplaintsService>();
   PostsService _postService = locator<PostsService>();
   AuthenticationService _authenticationService =
       locator<AuthenticationService>();
@@ -81,7 +77,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     setState(() {
       isLoading = true;
     });
-    String imageUrl = await _complaintsService.uploadImageAndGetDownloadableUrl(
+    String imageUrl = await _postService.uploadImageAndGetDownloadableUrl(
         _image, genImageName(_image, currentUser: _userProfile));
     print(imageUrl);
     Post post = Post(
@@ -99,11 +95,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       isComplaint: widget.isComplaint,
     );
 
-    if (widget.isComplaint) {
-      await _complaintsService.createComplaint(post);
-    } else {
       await _postService.createPost(post);
-    }
 
     setState(() {
       isLoading = false;
@@ -126,11 +118,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       isLoading = true;
     });
 
-    if(widget.isComplaint)  {
-      await _complaintsService.updateComplaint(widget.post);
-    }else{
       await _postService.updatePost(widget.post);
-    }
 
     setState(() {
       isLoading = false;

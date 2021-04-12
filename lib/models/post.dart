@@ -29,7 +29,7 @@ class Post {
     this.likes,
     this.createdAt,
     this.updatedAt,
-    this.isComplaint = false,
+    @required this.isComplaint = false,
   });
 
   factory Post.fromSnapshot(DocumentSnapshot snapshot) {
@@ -42,6 +42,7 @@ class Post {
     if (map == null) return null;
     return Post(
       id: id,
+      isComplaint: map['isComplaint'],
       imageUrl: map['imageUrl'],
       content: map['content'] ?? "",
       category: map['category'],
@@ -58,6 +59,7 @@ class Post {
   Map<String, dynamic> toMap() {
     return {
       "imageUrl": imageUrl,
+      "isComplaint": isComplaint,
       "content": content,
       "category": category,
       "author": author,

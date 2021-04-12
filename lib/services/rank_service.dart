@@ -1,17 +1,15 @@
 import 'package:clean_space/app/locator.dart';
 import 'package:clean_space/models/area.dart';
-import 'package:clean_space/services/complaints_service.dart';
 import 'package:clean_space/services/posts_service.dart';
 
 class RankService {
   PostsService _postsService = locator<PostsService>();
-  ComplaintsService _complaintsService = locator<ComplaintsService>();
 
   Future<int> calculatePointsOfArea(Location location) async {
     int numberOfAppreciation =
-        await _postsService.getPostsByAreaCount(location);
+        await _postsService.getPostsByAreaCount(location, isComplaint: false);
     int numberOfComplaints =
-        await _complaintsService.getComplaintsByAreaCount(location);
+        await _postsService.getPostsByAreaCount(location, isComplaint: true);
 
     return numberOfAppreciation - numberOfComplaints;
   }
@@ -28,9 +26,7 @@ class RankService {
   }
 
   Future<List<Location>> getAllLocations() async {
-    List<String> allLocations =  await _postsService.getAllLocationsFromPost() +
-        await _complaintsService.getAllLocationsFromComplaints();
-
-    return allLocations.toSet().map<Location>((locationString) => Location.fromString(locationString)).toList();
+    List<String> allLocations =  await _postsService.getAllLocationsFromPost();
+    return allLocations.map<Location>((locationString) => Location.fromString(locationString)).toList();
   }
 }

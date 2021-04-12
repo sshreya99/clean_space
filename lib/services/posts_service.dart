@@ -47,16 +47,16 @@ class PostsService implements PostsServiceBase{
   }
 
   @override
-  Stream<List<Post>> getAllPosts() {
-    return _firestoreService.collectionStream<Post>(postsCollectionPath, (snapshot) => Post.fromSnapshot(snapshot));
+  Stream<List<Post>> getAllPosts({bool isComplaint = false}) {
+    return _firestoreService.collectionStream<Post>(postsCollectionPath, (snapshot) => Post.fromSnapshot(snapshot)).map((posts) => posts.where((post) => post.isComplaint == isComplaint).toList());
   }
 
   @override
-  Stream<List<Post>> getAllPostsOf(UserProfile user) {
+  Stream<List<Post>> getAllPostsOf(UserProfile user, {bool isComplaint = false}) {
     return _firestoreService.getDataStreamFromQuerySnapShotStream<Post>(
         _firestore.collection(postsCollectionPath).where("author", isEqualTo: user.uid).orderBy("createdAt", descending: true).snapshots(),
             (snapshot) => Post.fromSnapshot(snapshot)
-    );
+    ).map((posts) => posts.where((post) => post.isComplaint == isComplaint).toList());
   }
 
   @override
@@ -66,16 +66,16 @@ class PostsService implements PostsServiceBase{
   }
 
   @override
-  Stream<List<Post>> getPostsByArea(Location location) {
+  Stream<List<Post>> getPostsByArea(Location location, {isComplaint = false}) {
     return _firestoreService.getDataStreamFromQuerySnapShotStream<Post>(
         _firestore.collection(postsCollectionPath).where("location", isEqualTo: location.toStringForDatabase()).orderBy("createdAt", descending: true).snapshots(),
             (snapshot) => Post.fromSnapshot(snapshot)
-    );
+    ).map((posts) => posts.where((post) => post.isComplaint == isComplaint).toList());
   }
 
   @override
-  Future<int> getPostsByAreaCount(Location location) async {
-    List<Post> posts =  await getPostsByArea(location).first;
+  Future<int> getPostsByAreaCount(Location location, {bool isComplaint = false}) async {
+    List<Post> posts =  await getPostsByArea(location, isComplaint: isComplaint).first;
     return posts.length;
   }
 
@@ -101,5 +101,4 @@ class PostsService implements PostsServiceBase{
     final qs = await _firestore.collection(postsCollectionPath).get();
     return qs.docs.map<String>((p) => p['location'] as String).toSet().toList();
   }
-
 }

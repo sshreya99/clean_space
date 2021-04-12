@@ -3,7 +3,6 @@ import 'package:clean_space/app/router.gr.dart';
 import 'package:clean_space/models/post.dart';
 import 'package:clean_space/models/user_profile.dart';
 import 'package:clean_space/services/authentication_service.dart';
-import 'package:clean_space/services/complaints_service.dart';
 import 'package:clean_space/services/posts_service.dart';
 import 'package:clean_space/services/user_profile_service.dart';
 import 'package:clean_space/ui/utils/constants.dart';
@@ -15,6 +14,7 @@ import 'package:intl/intl.dart';
 class FeedItem extends StatefulWidget {
   final Post post;
   final bool isSinglePost;
+
   FeedItem({this.post, this.isSinglePost = false});
 
   @override
@@ -24,7 +24,6 @@ class FeedItem extends StatefulWidget {
 class _FeedItemState extends State<FeedItem> {
   final UserProfileService _userProfileService = locator<UserProfileService>();
   final PostsService _postsService = locator<PostsService>();
-  final ComplaintsService _complaintsService = locator<ComplaintsService>();
 
   final AuthenticationService _authenticationService =
       locator<AuthenticationService>();
@@ -60,8 +59,10 @@ class _FeedItemState extends State<FeedItem> {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: ListTile(
-                  onTap: (){
-                    Navigator.pushNamed(context, Routes.profileScreen, arguments: ProfileScreenArguments(userProfile: snapshot.data));
+                  onTap: () {
+                    Navigator.pushNamed(context, Routes.profileScreen,
+                        arguments:
+                            ProfileScreenArguments(userProfile: snapshot.data));
                   },
                   contentPadding: EdgeInsets.all(0),
                   leading: snapshot?.data?.avatarUrl != null
@@ -164,15 +165,15 @@ class _FeedItemState extends State<FeedItem> {
             ),
           ),
           SizedBox(height: 10),
-          if(!widget.isSinglePost)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: CustomTextFormField(
-              borderColor: Colors.black12,
-              hintText: "Type your comment...",
-              borderRadius: BorderRadius.circular(50),
+          if (!widget.isSinglePost)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: CustomTextFormField(
+                borderColor: Colors.black12,
+                hintText: "Type your comment...",
+                borderRadius: BorderRadius.circular(50),
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -201,7 +202,7 @@ class _FeedItemState extends State<FeedItem> {
               "Are you sure you want to delete this post? this action can not be undone."),
           actions: [
             TextButton(
-              onPressed: ()  {
+              onPressed: () {
                 Navigator.pop(context);
               },
               child: Text(
@@ -211,12 +212,7 @@ class _FeedItemState extends State<FeedItem> {
             ),
             TextButton(
               onPressed: () async {
-                if(widget.post.isComplaint){
-                  await _complaintsService.deleteComplaint(widget.post.id);
-                }else{
-                  await _postsService.deletePost(widget.post.id);
-
-                }
+                await _postsService.deletePost(widget.post.id);
                 Navigator.pop(context);
               },
               child: Text(

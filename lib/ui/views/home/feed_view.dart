@@ -2,7 +2,6 @@ import 'package:clean_space/app/locator.dart';
 import 'package:clean_space/app/router.gr.dart';
 import 'package:clean_space/models/post.dart';
 import 'package:clean_space/services/authentication_service.dart';
-import 'package:clean_space/services/complaints_service.dart';
 import 'package:clean_space/services/posts_service.dart';
 import 'package:clean_space/ui/utils/theme_colors.dart';
 import 'package:clean_space/ui/views/widgets/feed_item.dart';
@@ -19,8 +18,7 @@ class _FeedViewState extends State<FeedView> {
   locator<AuthenticationService>();
   final PostsService _postsService =
   locator<PostsService>();
-  final ComplaintsService _complaintsService =
-  locator<ComplaintsService>();
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -123,7 +121,7 @@ class _FeedViewState extends State<FeedView> {
               ),
               Center(
                 child: StreamBuilder(
-                  stream: _complaintsService.getAllComplaints(),
+                  stream: _postsService.getAllPosts(isComplaint: true),
                   builder: (context, complaintsSnapshot) {
                     if (complaintsSnapshot.hasError) {
                       print("error: " +  complaintsSnapshot.error.toString());
