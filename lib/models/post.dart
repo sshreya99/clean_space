@@ -109,7 +109,6 @@ class PostLike{
 
   Map<String, dynamic> toMap() {
     return {
-      "id": id,
       "category": category,
       "isForComplaint":  isForComplaint,
     };

@@ -6,9 +6,12 @@ import 'package:clean_space/models/user_profile.dart';
 import 'package:clean_space/services/authentication_service.dart';
 import 'package:clean_space/services/posts_service.dart';
 import 'package:clean_space/ui/utils/constants.dart';
+import 'package:clean_space/ui/utils/theme_colors.dart';
 import 'package:clean_space/ui/views/auth/widgets/custom_text_form_field.dart';
+import 'package:clean_space/ui/views/widgets/custom_rounded_rectangular_button.dart';
 import 'package:clean_space/ui/views/widgets/unfocus_wrapper.dart';
 import 'package:clean_space/utils/helper.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:clean_space/services/image_services.dart';
 import 'package:clean_space/app/router.gr.dart';
@@ -102,12 +105,21 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     setState(() {
       isLoading = false;
       _selectedCatValue = "";
+      _newCategoryTextEditor.clear();
       _selectedAreaValue = "";
       _commentAboutPlace.clear();
       _image = null;
     });
 
     Navigator.pop(context);
+  }
+
+  void addCategory() async {
+    await _postService.addPostCategory(PostCategory(category: _newCategoryTextEditor.text, isForComplaint: widget.isComplaint));
+    setState(() {
+      _selectedCatValue = _newCategoryTextEditor.text;
+    });
+    isCatVisible = true;
   }
 
   void editPost() async {
@@ -119,7 +131,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     setState(() {
       isLoading = true;
     });
-
     await _postService.updatePost(widget.post);
 
     setState(() {
@@ -166,245 +177,265 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           ],
           backgroundColor: Colors.white,
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Center(
-                  child: Container(
-                    height: 200,
-                    width: 300,
-                    child: _image != null
-                        ? Image.file(_image)
-                        : widget.post?.imageUrl != null
-                            ? Image.network(widget.post.imageUrl)
-                            : Icon(Icons.image),
+        body: StreamBuilder<List<PostCategory>>(
+          stream: widget.isComplaint?_postService.getPostCategory(isForComplaint: true) : _postService.getPostCategory(isForComplaint: false),
+          builder: (context, snapshot) {
+            List<PostCategory> _postCatList = snapshot.data;
+            List<DropdownMenuItem> _catItems = _postCatList.map((cat) => DropdownMenuItem(child: Text(cat.category), value: cat.category,)).toList();
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Container(
+                        height: 200,
+                        width: 300,
+                        child: _image != null
+                            ? Image.file(_image)
+                            : widget.post?.imageUrl != null
+                                ? Image.network(widget.post.imageUrl)
+                                : Icon(Icons.image),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              if (widget.post == null)
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: () async {
-                          File image = await ImageService.openCameraForImage();
-                          setState(() {
-                            _image = image;
-                          });
-                        },
-                        child: Container(
-                          width: 150,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                colors: [
-                                  Colors.green,
-                                  Colors.blue,
+                  if (widget.post == null)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              File image = await ImageService.openCameraForImage();
+                              setState(() {
+                                _image = image;
+                              });
+                            },
+                            child: Container(
+                              width: 150,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    colors: [
+                                      Colors.green,
+                                      Colors.blue,
+                                    ],
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight),
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    offset: Offset(5, 5),
+                                    blurRadius: 10,
+                                  )
                                 ],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight),
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black12,
-                                offset: Offset(5, 5),
-                                blurRadius: 10,
-                              )
-                            ],
-                          ),
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Icon(
-                                  Icons.camera_alt,
-                                  color: Colors.white,
-                                ),
-                                Text(
-                                  'Open Camera',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      GestureDetector(
-                        onTap: () async {
-                          File image = await ImageService.openGalleryForImage();
-                          setState(() {
-                            _image = image;
-                          });
-                        },
-                        child: Container(
-                          width: 150,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                colors: [
-                                  Colors.green,
-                                  Colors.blue,
-                                ],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight),
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black12,
-                                offset: Offset(5, 5),
-                                blurRadius: 10,
-                              )
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Center(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Icon(
-                                    Icons.image,
-                                    color: Colors.white,
-                                  ),
-                                  Text(
-                                    'Open Gallery',
-                                    style: TextStyle(
+                              ),
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Icon(
+                                      Icons.camera_alt,
                                       color: Colors.white,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
                                     ),
-                                  ),
-                                ],
+                                    Text(
+                                      'Open Camera',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              File image = await ImageService.openGalleryForImage();
+                              setState(() {
+                                _image = image;
+                              });
+                            },
+                            child: Container(
+                              width: 150,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    colors: [
+                                      Colors.green,
+                                      Colors.blue,
+                                    ],
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight),
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    offset: Offset(5, 5),
+                                    blurRadius: 10,
+                                  )
+                                ],
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Center(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Icon(
+                                        Icons.image,
+                                        color: Colors.white,
+                                      ),
+                                      Text(
+                                        'Open Gallery',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  SizedBox(height: 20),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color.fromRGBO(0, 0, 0, 0.06),
+                          blurRadius: 10.0,
+                          offset: Offset(2, 3),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              SizedBox(height: 20),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color.fromRGBO(0, 0, 0, 0.06),
-                      blurRadius: 10.0,
-                      offset: Offset(2, 3),
+                      ],
                     ),
-                  ],
-                ),
-                child: Visibility(
-                  visible: isCatVisible,
-                  child: Row(
-                    children: [
-                      Icon(Icons.apps, size: 20, color: Colors.grey),
-                      Expanded(
-                        child: SearchableDropdown.single(
-                          underline: Container(),
-                          displayClearIcon: false,
-                          items: categoryItems,
-                          value: _selectedCatValue,
-                          hint: "Select Category",
-                          searchHint: "Select one",
-                          onChanged: (value) {
-                            print(value);
-                            setState(() {
-                              _selectedCatValue = value;
-                              if (_selectedCatValue == "Add Category") {
-                                isCatVisible = false;
-                              }
-                            });
-                          },
-                          isExpanded: true,
+                    child: Visibility(
+                      visible: isCatVisible,
+                      child: Row(
+                        children: [
+                          Icon(Icons.apps, size: 20, color: Colors.grey),
+                          Expanded(
+                            child: SearchableDropdown.single(
+                              underline: Container(),
+                              displayClearIcon: false,
+                              items: _catItems,
+                              value: _selectedCatValue,
+                              hint: "Select Category",
+                              searchHint: "Select one",
+                              onChanged: (value) {
+                                print(value);
+                                setState(() {
+                                  _selectedCatValue = value;
+                                  if (_selectedCatValue == "Add Category") {
+                                    isCatVisible = false;
+                                  }
+                                });
+                              },
+                              isExpanded: true,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  _selectedCatValue == "Add Category"
+                      ? Container(
+                          margin: EdgeInsets.symmetric(horizontal: 20),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          child: Visibility(
+                              visible: true,
+                              child: CustomTextFormField(
+                                controller: _newCategoryTextEditor,
+                                hintText: "Add Category",
+                              )),
+                        )
+                      : Visibility(
+                          child: Container(),
+                          visible: false,
                         ),
-                      ),
-                    ],
+                  _selectedCatValue == "Add Category"?
+                      Visibility(
+                        visible: true,
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20),
+                          child: CustomRoundedRectangularButton(
+                            width: 100,
+                            onPressed: addCategory,
+                            color: ThemeColors.primary,
+                            child: Text("Add", style: TextStyle(color: Colors.white),),
+                          ),
+                        ),
+                      ) : Visibility(child: Container(), visible: false,),
+                  SizedBox(height: 20),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color.fromRGBO(0, 0, 0, 0.06),
+                          blurRadius: 10.0,
+                          offset: Offset(2, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.apps, size: 20, color: Colors.grey),
+                        Expanded(
+                          child: SearchableDropdown.single(
+                            underline: Container(),
+                            displayClearIcon: false,
+                            items: areaItems,
+                            value: _selectedAreaValue,
+                            hint: "Add Place",
+                            searchHint: "Select one",
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedAreaValue = value;
+                              });
+                            },
+                            isExpanded: true,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
-              _selectedCatValue == "Add Category"
-                  ? Container(
-                      margin: EdgeInsets.symmetric(horizontal: 20),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      child: Visibility(
-                          visible: true,
-                          child: CustomTextFormField(
-                            controller: _newCategoryTextEditor,
-                            hintText: "Add Category",
-                          )),
-                    )
-                  : Visibility(
-                      child: Container(),
-                      visible: false,
+                  SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: CustomTextFormField(
+                      controller: _commentAboutPlace,
+                      hintText: "Write something about this place...",
+                      maxLines: 8,
                     ),
-              SizedBox(height: 20),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color.fromRGBO(0, 0, 0, 0.06),
-                      blurRadius: 10.0,
-                      offset: Offset(2, 3),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.apps, size: 20, color: Colors.grey),
-                    Expanded(
-                      child: SearchableDropdown.single(
-                        underline: Container(),
-                        displayClearIcon: false,
-                        items: areaItems,
-                        value: _selectedAreaValue,
-                        hint: "Add Place",
-                        searchHint: "Select one",
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedAreaValue = value;
-                          });
-                        },
-                        isExpanded: true,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: 50),
+                ],
               ),
-              SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: CustomTextFormField(
-                  controller: _commentAboutPlace,
-                  hintText: "Write something about this place...",
-                  maxLines: 8,
-                ),
-              ),
-              SizedBox(height: 50),
-            ],
-          ),
+            );
+          }
         ),
       ),
     );
