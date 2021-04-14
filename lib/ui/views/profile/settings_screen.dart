@@ -2,22 +2,123 @@ import 'package:clean_space/app/locator.dart';
 import 'package:clean_space/app/router.gr.dart';
 import 'package:clean_space/models/user_profile.dart';
 import 'package:clean_space/services/authentication_service.dart';
+import 'package:clean_space/ui/utils/theme_colors.dart';
+import 'package:clean_space/ui/utils/validators/auth_validators.dart';
+import 'package:clean_space/ui/views/auth/widgets/custom_text_form_field.dart';
 import 'package:clean_space/ui/views/widgets/custom_rounded_rectangular_button.dart';
 import 'package:flutter/material.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   final UserProfile userProfile;
 
- SettingsScreen({this.userProfile});
+  SettingsScreen({this.userProfile});
 
+  @override
+  _SettingsScreenState createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
   AuthenticationService _authenticationService =
       locator<AuthenticationService>();
 
+  final _newPasswordTextEdititingController = TextEditingController();
 
+  final _confirmNewPasswordTextEdititingController = TextEditingController();
+
+  final _changePassFormKey = GlobalKey<FormState>();
+
+  bool isLoading = false;
+
+  void changePassword() async {
+    if (!_changePassFormKey.currentState.validate()) return;
+    setState(() {
+      isLoading = true;
+    });
+    await _authenticationService
+        .changePassword(_newPasswordTextEdititingController.text);
+    setState(() {
+      isLoading = false;
+    });
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
-    print(userProfile.username);
+    _showBottomSheet() {
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext bc) {
+          return Container(
+            height: double.infinity,
+            color: Colors.white,
+            child: Center(
+              child: Form(
+                key: _changePassFormKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(
+                        child: Text(
+                          "Change Password",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: CustomTextFormField(
+                        controller: _newPasswordTextEdititingController,
+                        validator: (value) =>
+                            AuthValidators.validatePassword(value),
+                        hintText: "Enter new password",
+                        obscureText: true,
+                        keyboardType: TextInputType.visiblePassword,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: CustomTextFormField(
+                        controller: _confirmNewPasswordTextEdititingController,
+                        validator: (value) =>
+                            AuthValidators.validateConfirmPassword(value,
+                                _newPasswordTextEdititingController.text),
+                        hintText: "Confirm Password",
+                        obscureText: true,
+                        keyboardType: TextInputType.visiblePassword,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Center(
+                      child: isLoading
+                          ? CircularProgressIndicator()
+                          : CustomRoundedRectangularButton(
+                              width: 100,
+                              onPressed: changePassword,
+                              color: ThemeColors.primary,
+                              child: Text(
+                                "Submit",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(
@@ -39,7 +140,7 @@ class SettingsScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamed(context, Routes.editProfileView,
                     arguments: EditProfileViewArguments(
-                      userProfile: userProfile,
+                      userProfile: widget.userProfile,
                     ));
               },
               child: Row(
@@ -91,7 +192,7 @@ class SettingsScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
             CustomRoundedRectangularButton(
-              onPressed: () {},
+              onPressed: _showBottomSheet,
               child: Row(
                 children: [
                   Icon(

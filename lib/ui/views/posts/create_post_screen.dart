@@ -35,7 +35,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   File _image;
   String _selectedCatValue = "";
   String _selectedAreaValue = "";
+  final _newCategoryTextEditor = TextEditingController();
   bool isLoading = false;
+  bool isCatVisible = true;
   List<DropdownMenuItem> categoryItems;
 
   List<DropdownMenuItem> areaItems = Constants.areas
@@ -200,13 +202,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           height: 40,
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [
-                                Colors.green,
-                                Colors.blue,
-                              ],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                            ),
+                                colors: [
+                                  Colors.green,
+                                  Colors.blue,
+                                ],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight),
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
@@ -310,29 +311,51 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     ),
                   ],
                 ),
-                child: Row(
-                  children: [
-                    Icon(Icons.apps, size: 20, color: Colors.grey),
-                    Expanded(
-                      child: SearchableDropdown.single(
-                        underline: Container(),
-                        displayClearIcon: false,
-                        items: categoryItems,
-                        value: _selectedCatValue,
-                        hint: "Select Category",
-                        searchHint: "Select one",
-                        onChanged: (value) {
-                          print(value);
-                          setState(() {
-                            _selectedCatValue = value;
-                          });
-                        },
-                        isExpanded: true,
+                child: Visibility(
+                  visible: isCatVisible,
+                  child: Row(
+                    children: [
+                      Icon(Icons.apps, size: 20, color: Colors.grey),
+                      Expanded(
+                        child: SearchableDropdown.single(
+                          underline: Container(),
+                          displayClearIcon: false,
+                          items: categoryItems,
+                          value: _selectedCatValue,
+                          hint: "Select Category",
+                          searchHint: "Select one",
+                          onChanged: (value) {
+                            print(value);
+                            setState(() {
+                              _selectedCatValue = value;
+                              if (_selectedCatValue == "Add Category") {
+                                isCatVisible = false;
+                              }
+                            });
+                          },
+                          isExpanded: true,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
+              _selectedCatValue == "Add Category"
+                  ? Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      child: Visibility(
+                          visible: true,
+                          child: CustomTextFormField(
+                            controller: _newCategoryTextEditor,
+                            hintText: "Add Category",
+                          )),
+                    )
+                  : Visibility(
+                      child: Container(),
+                      visible: false,
+                    ),
               SizedBox(height: 20),
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 20),

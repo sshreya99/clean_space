@@ -13,6 +13,7 @@ class Constants{
     "Street Lights",
     "Electricity",
     "Drainage Problem",
+    "Add Category"
   ];
 
   static const List<String> postCategory = [
@@ -20,6 +21,7 @@ class Constants{
     "Dean Road",
     "RCC Road",
     "Trashing Facility",
+    "Add Category"
   ];
 
   static const List<String> areas= [
