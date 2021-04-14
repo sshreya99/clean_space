@@ -129,4 +129,20 @@ class PostsService implements PostsServiceBase{
   //
   // }
 
+  Future<void> addPostCategory(PostCategory postCategory){
+    return _firestore.collection(FireStoreCollections.postCategories).add(postCategory.toMap());
+  }
+  
+  Future<void> removePostCategory(PostCategory postCategory){
+    return _firestore.collection(FireStoreCollections.postCategories).doc(postCategory.id).delete();
+  }
+
+  Stream<List<PostCategory>> getPostCategory({bool isForComplaint = false})
+  {
+    assert (isForComplaint != null);
+    return _firestoreService.getDataStreamFromQuerySnapShotStream<PostCategory>(
+        _firestore.collection(FireStoreCollections.postCategories).snapshots(),
+            (snapshot) => PostCategory.fromMap(snapshot.data(), snapshot.id)
+    ).map((categories) => categories.where((category) => category.isForComplaint == isForComplaint).toList());
+  }
 }

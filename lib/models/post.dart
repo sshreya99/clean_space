@@ -90,4 +90,28 @@ class PostLike{
       avatarUrl: map['avatarUrl'] as String,
     );
   }
+}class PostCategory{
+  String id;
+  String category;
+  bool isForComplaint;
+
+  PostCategory({this.id, @required this.category, @required this.isForComplaint});
+
+  factory PostCategory.fromMap(Map<String, dynamic> map, String id){
+    if(map == null) return null;
+
+    return PostCategory(
+      id: id,
+      category: map['category'] as String,
+      isForComplaint:  map['isForComplaint'] as bool,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      "id": id,
+      "category": category,
+      "isForComplaint":  isForComplaint,
+    };
+  }
 }
