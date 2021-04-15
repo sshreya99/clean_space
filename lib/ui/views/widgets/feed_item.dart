@@ -6,10 +6,14 @@ import 'package:clean_space/services/authentication_service.dart';
 import 'package:clean_space/services/posts_service.dart';
 import 'package:clean_space/services/user_profile_service.dart';
 import 'package:clean_space/ui/utils/constants.dart';
+import 'package:clean_space/ui/utils/theme_colors.dart';
+import 'package:clean_space/ui/utils/ui_helpers.dart';
 import 'package:clean_space/ui/views/auth/widgets/custom_text_form_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:share/share.dart';
+import 'package:image_downloader/image_downloader.dart';
 
 class FeedItem extends StatefulWidget {
   final Post post;
@@ -27,6 +31,8 @@ class _FeedItemState extends State<FeedItem> {
 
   final AuthenticationService _authenticationService =
       locator<AuthenticationService>();
+
+  UserProfile _postUserProfile;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +62,9 @@ class _FeedItemState extends State<FeedItem> {
                   height: 72,
                   width: double.infinity,
                 );
+              // setState(() {
+              _postUserProfile = snapshot.data;
+              // });
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: ListTile(
@@ -116,64 +125,16 @@ class _FeedItemState extends State<FeedItem> {
                     ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    PostLikeWidget(widget.post),
-                    SizedBox(width: 20),
-                    Row(
-                      children: [
-                        Icon(Icons.comment),
-                        SizedBox(width: 10),
-                        Text("126k"),
-                      ],
-                    ),
-                    SizedBox(width: 20),
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.share),
-                    ),
-                  ],
-                ),
-                Text(DateFormat("MMM, d").format(widget.post.createdAt)),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Text(
-              widget.post.content,
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-          SizedBox(height: 5),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Text(
-              "See all 220 comments",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: CustomTextFormField(
-              borderColor: Colors.black12,
-              hintText: "Type your comment...",
-              borderRadius: BorderRadius.circular(50),
-            ),
-          ),
+          PostFooter(
+            post: widget.post,
+            postUserProfile: _postUserProfile,
+          )
         ],
       ),
     );
   }
 
   void choiceAction(String choice) {
-    print(widget.post);
     if (choice == Constants.choices[0]) {
       Navigator.pushNamed(
         context,
@@ -248,34 +209,208 @@ class _PostLikeWidgetState extends State<PostLikeWidget> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<PostLike>>(
-        stream: _postsService.getLikesOf(widget.post),
-        builder: (context, snapshot) {
-          bool hasCurrentUserLiked = snapshot?.data
-                  ?.map((pl) => pl.id)
-                  ?.contains(_authenticationService.currentFirebaseUser.uid) ??
-              false;
-          return Row(
+      stream: _postsService.getLikesOf(widget.post),
+      builder: (context, snapshot) {
+        bool hasCurrentUserLiked = snapshot?.data
+                ?.map((pl) => pl.id)
+                ?.contains(_authenticationService.currentFirebaseUser.uid) ??
+            false;
+
+        int likesCount = snapshot?.data?.length ?? 0;
+        return Row(
+          children: [
+            IconButton(
+              icon: hasCurrentUserLiked
+                  ? Icon(
+                      Icons.favorite,
+                      color: Colors.red,
+                    )
+                  : Icon(Icons.favorite_border),
+              onPressed: () async {
+                if (currentUserProfile == null) return;
+                if (hasCurrentUserLiked) {
+                  return await _postsService.removeLike(
+                      widget.post, currentUserProfile);
+                }
+                await _postsService.addLike(widget.post, currentUserProfile);
+              },
+            ),
+            // SizedBox(width: 5),
+            GestureDetector(
+              onTap: likesCount <= 0 ? null :  () {
+                Navigator.pushNamed(context, Routes.postLikesPage,
+                    arguments: PostLikesPageArguments(posLikes: snapshot.data));
+              },
+              child: Text("$likesCount ${likesCount == 1 ? "Like" : "Likes"}"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class PostFooter extends StatefulWidget {
+  final Post post;
+  final UserProfile postUserProfile;
+
+  const PostFooter({this.post, this.postUserProfile});
+
+  @override
+  _PostFooterState createState() => _PostFooterState();
+}
+
+class _PostFooterState extends State<PostFooter> {
+  bool isImageDownloadingForShare = false;
+  String downloadedImageId;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                icon: hasCurrentUserLiked
-                    ? Icon(
-                        Icons.favorite,
-                        color: Colors.red,
-                      )
-                    : Icon(Icons.favorite_border),
-                onPressed: () async {
-                  if (currentUserProfile == null) return;
-                  if (hasCurrentUserLiked) {
-                    return await _postsService.removeLike(
-                        widget.post, currentUserProfile);
+              Row(
+                children: [
+                  PostLikeWidget(widget.post),
+                  // SizedBox(width: 20),
+                  // Row(
+                  //   children: [
+                  //     Icon(Icons.comment),
+                  //     SizedBox(width: 10),
+                  //     Text("126k"),
+                  //   ],
+                  // ),
+                  SizedBox(width: 20),
+                  isImageDownloadingForShare
+                      ? CircularProgressIndicator()
+                      : IconButton(
+                          onPressed: () async {
+                            setState(() {
+                              isImageDownloadingForShare = true;
+                            });
+                            if (downloadedImageId == null) {
+                              downloadedImageId =
+                                  await ImageDownloader.downloadImage(
+                                      widget.post.imageUrl);
+                            }
+
+                            if (downloadedImageId == null)
+                              return showErrorDialog(context,
+                                  errorMessage: "Unable to download image!");
+                            String imagePath = await ImageDownloader.findPath(
+                                downloadedImageId);
+                            setState(() {
+                              isImageDownloadingForShare = false;
+                            });
+                            Share.shareFiles([imagePath],
+                                text:
+                                    "See this ${widget.post.isComplaint ? "complaint" : "post"} shared by ${widget.postUserProfile.username}. \n '${widget.post.content.trim()}' \n\nfrom *clean space*");
+                          },
+                          icon: Icon(Icons.share),
+                        ),
+                ],
+              ),
+              Text(DateFormat("MMM, d").format(widget.post.createdAt)),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Text(
+            widget.post.content,
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Text(
+            "",
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+        SizedBox(height: 5),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 10),
+        //   child: Text(
+        //     "See all 220 comments",
+        //     style: TextStyle(fontWeight: FontWeight.bold),
+        //   ),
+        // ),
+        // SizedBox(height: 10),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 10),
+        //   child: CustomTextFormField(
+        //     borderColor: Colors.black12,
+        //     hintText: "Type your comment...",
+        //     borderRadius: BorderRadius.circular(50),
+        //   ),
+        // ),
+      ],
+    );
+  }
+}
+
+class PostLikesPage extends StatefulWidget {
+  final List<PostLike> posLikes;
+
+  const PostLikesPage(this.posLikes);
+
+  @override
+  _PostLikesPageState createState() => _PostLikesPageState();
+}
+
+class _PostLikesPageState extends State<PostLikesPage> {
+  UserProfileService _userProfileService = locator<UserProfileService>();
+  bool isFetchingProfile = false;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Likes"),
+      ),
+      body: ListView(
+        children: widget.posLikes
+            .map(
+              (postLike) => ListTile(
+                leading: CircleAvatar(
+                  backgroundImage: postLike.avatarUrl == null
+                      ? null
+                      : NetworkImage(postLike.avatarUrl),
+                  backgroundColor: ThemeColors.primary,
+                  child: postLike.avatarUrl == null ? Icon(Icons.person) : null,
+                ),
+                title: Text(postLike.username),
+                subtitle: Text(postLike.email),
+                trailing: isFetchingProfile ? CircularProgressIndicator() : Icon(Icons.arrow_forward_ios, size: 20),
+                onTap: () async {
+                  setState(() {
+                    isFetchingProfile = true;
+                  });
+                  final _userProfile =
+                      await _userProfileService.getUserProfile(postLike.id);
+
+                  setState(() {
+                    isFetchingProfile = false;
+                  });
+                  if (_userProfile == null) {
+                    showErrorDialog(context,
+                        errorMessage:
+                            "Something went wrong, please try again later!");
                   }
-                  await _postsService.addLike(widget.post, currentUserProfile);
+                  Navigator.pushNamed(context, Routes.profileScreen,
+                      arguments:
+                          ProfileScreenArguments(userProfile: _userProfile));
                 },
               ),
-              // SizedBox(width: 5),
-              Text(snapshot?.data?.length?.toString() ?? "0")
-            ],
-          );
-        });
+            )
+            .toList(),
+      ),
+    );
   }
 }

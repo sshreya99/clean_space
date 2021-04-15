@@ -1,0 +1,779 @@
+@startuml
+set namespaceSeparator ::
+
+class "clean_space::app::router.dart::$Router" {
+}
+
+class "clean_space::app::router.gr.dart::Routes" {
+  {static} +dynamic startupScreen
+  {static} +dynamic onBoardingScreen
+  {static} +dynamic loginScreen
+  {static} +dynamic signUpScreen
+  {static} +dynamic forgotPasswordSendVerificationScreen
+  {static} +dynamic resetNewPasswordScreen
+  {static} +dynamic profileScreen
+  {static} +dynamic editProfileView
+  {static} +dynamic settingsScreen
+  {static} +dynamic homeScreen
+  {static} +dynamic createPostScreen
+  {static} +dynamic feedView
+  {static} +dynamic feedSingleScreen
+  {static} +dynamic rankView
+  {static} +dynamic areaFeedView
+  {static} +Set all
+}
+
+class "clean_space::app::router.gr.dart::Router" {
+  -List<RouteDef> _routes
+  -Map<Type, Route<dynamic> Function(RouteData)> _pagesMap
+  +List<RouteDef> routes
+  +Map<Type, Route<dynamic> Function(RouteData)> pagesMap
+}
+
+"auto_route::src::router_base.dart::RouterBase" <|-- "clean_space::app::router.gr.dart::Router"
+
+class "clean_space::app::router.gr.dart::ProfileScreenArguments" {
+  +UserProfile userProfile
+  +bool isCurrentProfile
+}
+
+"clean_space::app::router.gr.dart::ProfileScreenArguments" o-- "clean_space::models::user_profile.dart::UserProfile"
+
+class "clean_space::app::router.gr.dart::EditProfileViewArguments" {
+  +UserProfile userProfile
+}
+
+"clean_space::app::router.gr.dart::EditProfileViewArguments" o-- "clean_space::models::user_profile.dart::UserProfile"
+
+class "clean_space::app::router.gr.dart::SettingsScreenArguments" {
+  +UserProfile userProfile
+}
+
+"clean_space::app::router.gr.dart::SettingsScreenArguments" o-- "clean_space::models::user_profile.dart::UserProfile"
+
+class "clean_space::app::router.gr.dart::CreatePostScreenArguments" {
+  +bool isComplaint
+  +Post post
+}
+
+"clean_space::app::router.gr.dart::CreatePostScreenArguments" o-- "clean_space::models::post.dart::Post"
+
+class "clean_space::app::router.gr.dart::FeedSingleScreenArguments" {
+  +Post post
+}
+
+"clean_space::app::router.gr.dart::FeedSingleScreenArguments" o-- "clean_space::models::post.dart::Post"
+
+class "clean_space::app::router.gr.dart::AreaFeedViewArguments" {
+  +Location location
+}
+
+"clean_space::app::router.gr.dart::AreaFeedViewArguments" o-- "clean_space::models::area.dart::Location"
+
+class "clean_space::errors::failure.dart::Failure" {
+  +String message
+  +String toString()
+}
+
+class "clean_space::main.dart::MyApp" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "clean_space::main.dart::MyApp"
+
+class "clean_space::models::area.dart::Location" {
+  +int point
+  +String country
+  +String state
+  +String city
+  +String area
+  {static} +String separator
+  +String toStringForDatabase()
+  +String toString()
+}
+
+class "clean_space::models::post.dart::Post" {
+  +String id
+  +bool isComplaint
+  +String imageUrl
+  +String content
+  +String category
+  +Location location
+  +String author
+  +List<String> likes
+  +DateTime createdAt
+  +DateTime updatedAt
+  +String toString()
+  +Map toMap()
+}
+
+"clean_space::models::post.dart::Post" o-- "clean_space::models::area.dart::Location"
+
+class "clean_space::models::post.dart::PostLike" {
+  +String id
+  +String username
+  +String email
+  +String avatarUrl
+}
+
+class "clean_space::models::post.dart::PostCategory" {
+  +String id
+  +String category
+  +bool isForComplaint
+  +Map toMap()
+}
+
+class "clean_space::models::user_profile.dart::UserProfile" {
+  +String uid
+  +String username
+  +String email
+  +String phone
+  +String avatarUrl
+  +Location location
+  +String bio
+  +DateTime createdAt
+  +DateTime updatedAt
+  +String toString()
+  +Map toMap()
+  +Map toMapForLikes()
+}
+
+"clean_space::models::user_profile.dart::UserProfile" o-- "clean_space::models::area.dart::Location"
+
+class "clean_space::services::authentication_service.dart::AuthenticationService" {
+  -FirebaseAuth _firebaseAuth
+  -UserProfileService _userProfileService
+  +User currentFirebaseUser
+  +bool isUserLoggedIn
+  +Future<UserProfile> currentUserProfile
+  -Future _deleteCurrentAuthUser()
+  +Future signInWithEmailAndPassword()
+  +Future signUpWithEmailAndPassword()
+  +Future sendForgotPasswordEmail()
+  +Future signOut()
+  +Future changePassword()
+  -dynamic _getErrorMessageFromFirebaseException()
+}
+
+"clean_space::services::authentication_service.dart::AuthenticationService" o-- "firebase_auth::firebase_auth.dart::FirebaseAuth"
+"clean_space::services::authentication_service.dart::AuthenticationService" o-- "clean_space::services::user_profile_service.dart::UserProfileService"
+"clean_space::services::authentication_service.dart::AuthenticationService" o-- "firebase_auth::firebase_auth.dart::User"
+
+class "clean_space::services::firestore_service.dart::FirestoreService" {
+  {static} -FirebaseFirestore _firebaseFireStore
+  +Future setData()
+  +Future addData()
+  +Future updateData()
+  +Future getDocument()
+  +Stream collectionStream()
+  +Stream getDataStreamFromQuerySnapShotStream()
+  +Future deleteDocument()
+  -Future _tryFutureOrThrowFailure()
+}
+
+"clean_space::services::firestore_service.dart::FirestoreService" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+
+class "clean_space::services::image_services.dart::ImageService" {
+  {static} +ImagePicker picker
+  {static} +Future openCameraForImage()
+  {static} +Future openGalleryForImage()
+}
+
+"clean_space::services::image_services.dart::ImageService" o-- "image_picker::image_picker.dart::ImagePicker"
+
+abstract class "clean_space::services::posts_service.dart::PostsServiceBase" {
+  +Stream getAllPosts()
+  +Stream getAllPostsOf()
+  +Stream getPostsByArea()
+  +Future getPostsByAreaCount()
+  +Future getPost()
+  +Future createPost()
+  +Future deletePost()
+  +Future updatePost()
+}
+
+class "clean_space::services::posts_service.dart::PostsService" {
+  -FirebaseFirestore _firestore
+  -FirestoreService _firestoreService
+  {static} -FirebaseStorage _firebaseStorage
+  +String postsCollectionPath
+  -Reference _postImagesBucket
+  +Future createPost()
+  +Future deletePost()
+  +Stream getAllPosts()
+  +Stream getAllPostsOf()
+  +Future getPost()
+  +Stream getPostsByArea()
+  +Future getPostsByAreaCount()
+  +Future updatePost()
+  +Future uploadImageAndGetDownloadableUrl()
+  +Future getAllLocationsFromPost()
+  +Future addLike()
+  +Future removeLike()
+  +Stream getLikesOf()
+  +Future addPostCategory()
+  +Stream getPostCategory()
+}
+
+"clean_space::services::posts_service.dart::PostsService" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+"clean_space::services::posts_service.dart::PostsService" o-- "clean_space::services::firestore_service.dart::FirestoreService"
+"clean_space::services::posts_service.dart::PostsService" o-- "firebase_storage::firebase_storage.dart::FirebaseStorage"
+"clean_space::services::posts_service.dart::PostsService" o-- "firebase_storage::firebase_storage.dart::Reference"
+"clean_space::services::posts_service.dart::PostsServiceBase" <|-- "clean_space::services::posts_service.dart::PostsService"
+
+class "clean_space::services::rank_service.dart::RankService" {
+  -PostsService _postsService
+  +Future calculatePointsOfArea()
+  +Future sortAndFilterLocationsByRank()
+  +Future getAllLocations()
+}
+
+"clean_space::services::rank_service.dart::RankService" o-- "clean_space::services::posts_service.dart::PostsService"
+
+class "clean_space::services::user_profile_service.dart::UserProfileService" {
+  {static} -FirebaseFirestore _firebaseFireStore
+  {static} -FirebaseStorage _firebaseStorage
+  -CollectionReference _userProfiles
+  -Reference _userProfileAvatarBucket
+  +Future getUserProfile()
+  +Future isUsernameAlreadyTaken()
+  +Future getEmailFromUsername()
+  +Future createUserProfile()
+  +Future updateUserProfile()
+  +Future uploadAvatarImageAndGetDownloadableUrl()
+  +Future updateAvatarImageInUserProfile()
+  +Future deleteAvatarImage()
+}
+
+"clean_space::services::user_profile_service.dart::UserProfileService" o-- "cloud_firestore::cloud_firestore.dart::FirebaseFirestore"
+"clean_space::services::user_profile_service.dart::UserProfileService" o-- "firebase_storage::firebase_storage.dart::FirebaseStorage"
+"clean_space::services::user_profile_service.dart::UserProfileService" o-- "cloud_firestore::cloud_firestore.dart::CollectionReference"
+"clean_space::services::user_profile_service.dart::UserProfileService" o-- "firebase_storage::firebase_storage.dart::Reference"
+
+class "clean_space::services::user_profile_service.dart::_FirestoreUserProfileKeys" {
+  {static} +String avatarUrl
+}
+
+class "clean_space::ui::utils::constants.dart::Constants" {
+  {static} +List<String> choices
+  {static} +List<String> complaintCategory
+  {static} +List<String> postCategory
+  {static} +List<String> areas
+}
+
+class "clean_space::ui::utils::setup_dialog_ui.dart::_ErrorDialog" {
+  +DialogRequest request
+  +dynamic Function(DialogResponse) completer
+  +Widget build()
+}
+
+"clean_space::ui::utils::setup_dialog_ui.dart::_ErrorDialog" o-- "stacked_services::src::models::overlay_request.dart::DialogRequest"
+"clean_space::ui::utils::setup_dialog_ui.dart::_ErrorDialog" o-- "clean_space::ui::utils::setup_dialog_ui.dart::dynamic Function(DialogResponse)"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "clean_space::ui::utils::setup_dialog_ui.dart::_ErrorDialog"
+
+class "clean_space::ui::utils::theme_colors.dart::ThemeColors" {
+  {static} +Color primary
+  {static} +Color primaryDark
+}
+
+"clean_space::ui::utils::theme_colors.dart::ThemeColors" o-- "dart::ui::Color"
+
+class "clean_space::ui::utils::validators::auth_validators.dart::AuthValidators" {
+  {static} +dynamic validatePassword()
+  {static} +dynamic validateEmail()
+  {static} +dynamic validateEmpty()
+  {static} +dynamic validatePhone()
+  {static} +dynamic validateConfirmPassword()
+}
+
+class "clean_space::ui::views::auth::forgot_password_send_verification_screen.dart::ForgotPasswordSendVerificationScreen" {
+  +_ForgotPasswordSendVerificationScreenState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "clean_space::ui::views::auth::forgot_password_send_verification_screen.dart::ForgotPasswordSendVerificationScreen"
+
+class "clean_space::ui::views::auth::forgot_password_send_verification_screen.dart::_ForgotPasswordSendVerificationScreenState" {
+  -TextEditingController _emailTextEditingController
+  -GlobalKey<FormState> _forgotPasswordFormKey
+  -AuthenticationService _authService
+  +bool isLoading
+  +bool hasVerificationSent
+  +Widget build()
+  -dynamic _performSendForgotPasswordVerification()
+}
+
+"clean_space::ui::views::auth::forgot_password_send_verification_screen.dart::_ForgotPasswordSendVerificationScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"clean_space::ui::views::auth::forgot_password_send_verification_screen.dart::_ForgotPasswordSendVerificationScreenState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
+"clean_space::ui::views::auth::forgot_password_send_verification_screen.dart::_ForgotPasswordSendVerificationScreenState" o-- "clean_space::services::authentication_service.dart::AuthenticationService"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "clean_space::ui::views::auth::forgot_password_send_verification_screen.dart::_ForgotPasswordSendVerificationScreenState"
+
+class "clean_space::ui::views::auth::login_screen.dart::LoginScreen" {
+  +_LoginScreenState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "clean_space::ui::views::auth::login_screen.dart::LoginScreen"
+
+class "clean_space::ui::views::auth::login_screen.dart::_LoginScreenState" {
+  -TextEditingController _emailTextEditingController
+  -TextEditingController _passwordTextEditingController
+  -GlobalKey<FormState> _loginFormKey
+  -AuthenticationService _authService
+  +bool isPasswordVisible
+  +bool isLoading
+  +Widget build()
+  -dynamic _performLogin()
+}
+
+"clean_space::ui::views::auth::login_screen.dart::_LoginScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"clean_space::ui::views::auth::login_screen.dart::_LoginScreenState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
+"clean_space::ui::views::auth::login_screen.dart::_LoginScreenState" o-- "clean_space::services::authentication_service.dart::AuthenticationService"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "clean_space::ui::views::auth::login_screen.dart::_LoginScreenState"
+
+class "clean_space::ui::views::auth::reset_new_password_screen.dart::ResetNewPasswordScreen" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "clean_space::ui::views::auth::reset_new_password_screen.dart::ResetNewPasswordScreen"
+
+class "clean_space::ui::views::auth::signup_screen.dart::SignUpScreen" {
+  +_SignUpScreenState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "clean_space::ui::views::auth::signup_screen.dart::SignUpScreen"
+
+class "clean_space::ui::views::auth::signup_screen.dart::_SignUpScreenState" {
+  -TextEditingController _usernameTextEditingController
+  -TextEditingController _emailTextEditingController
+  -TextEditingController _phoneNumberTextEditingController
+  -TextEditingController _passwordTextEditingController
+  -GlobalKey<FormState> _signUpFormKey
+  -AuthenticationService _authService
+  -UserProfileService _userProfileService
+  +bool isPasswordVisible
+  +bool isLoading
+  +Widget build()
+  -dynamic _performSignUp()
+}
+
+"clean_space::ui::views::auth::signup_screen.dart::_SignUpScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"clean_space::ui::views::auth::signup_screen.dart::_SignUpScreenState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
+"clean_space::ui::views::auth::signup_screen.dart::_SignUpScreenState" o-- "clean_space::services::authentication_service.dart::AuthenticationService"
+"clean_space::ui::views::auth::signup_screen.dart::_SignUpScreenState" o-- "clean_space::services::user_profile_service.dart::UserProfileService"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "clean_space::ui::views::auth::signup_screen.dart::_SignUpScreenState"
+
+class "clean_space::ui::views::auth::widgets::custom_text_form_field.dart::CustomTextFormField" {
+  +Icon icon
+  +dynamic hintText
+  +TextEditingController controller
+  +bool enabled
+  +dynamic Function(dynamic) validator
+  +Color textColor
+  +bool obscureText
+  +Widget suffixIcon
+  +TextInputType keyboardType
+  +void Function(dynamic) onChanged
+  +int maxLength
+  +int maxLines
+  +Color borderColor
+  +BorderRadius borderRadius
+  +Widget build()
+}
+
+"clean_space::ui::views::auth::widgets::custom_text_form_field.dart::CustomTextFormField" o-- "flutter::src::widgets::icon.dart::Icon"
+"clean_space::ui::views::auth::widgets::custom_text_form_field.dart::CustomTextFormField" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"clean_space::ui::views::auth::widgets::custom_text_form_field.dart::CustomTextFormField" o-- "clean_space::ui::views::auth::widgets::custom_text_form_field.dart::dynamic Function(dynamic)"
+"clean_space::ui::views::auth::widgets::custom_text_form_field.dart::CustomTextFormField" o-- "dart::ui::Color"
+"clean_space::ui::views::auth::widgets::custom_text_form_field.dart::CustomTextFormField" o-- "flutter::src::widgets::framework.dart::Widget"
+"clean_space::ui::views::auth::widgets::custom_text_form_field.dart::CustomTextFormField" o-- "flutter::src::services::text_input.dart::TextInputType"
+"clean_space::ui::views::auth::widgets::custom_text_form_field.dart::CustomTextFormField" o-- "clean_space::ui::views::auth::widgets::custom_text_form_field.dart::void Function(dynamic)"
+"clean_space::ui::views::auth::widgets::custom_text_form_field.dart::CustomTextFormField" o-- "flutter::src::painting::border_radius.dart::BorderRadius"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "clean_space::ui::views::auth::widgets::custom_text_form_field.dart::CustomTextFormField"
+
+class "clean_space::ui::views::home::feed_view.dart::FeedView" {
+  +_FeedViewState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "clean_space::ui::views::home::feed_view.dart::FeedView"
+
+class "clean_space::ui::views::home::feed_view.dart::_FeedViewState" {
+  -AuthenticationService _authenticationService
+  -PostsService _postsService
+  +Widget build()
+}
+
+"clean_space::ui::views::home::feed_view.dart::_FeedViewState" o-- "clean_space::services::authentication_service.dart::AuthenticationService"
+"clean_space::ui::views::home::feed_view.dart::_FeedViewState" o-- "clean_space::services::posts_service.dart::PostsService"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "clean_space::ui::views::home::feed_view.dart::_FeedViewState"
+
+class "clean_space::ui::views::home::home_screen.dart::HomeScreen" {
+  +_HomeScreenState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "clean_space::ui::views::home::home_screen.dart::HomeScreen"
+
+class "clean_space::ui::views::home::home_screen.dart::_HomeScreenState" {
+  -AuthenticationService _authenticationService
+  -int _currentIndex
+  -UserProfile _userProfile
+  +void initState()
+  +Future fetchUserProfile()
+  -dynamic _showBottomSheet()
+  +Widget build()
+  +Widget buildNavBarItem()
+}
+
+"clean_space::ui::views::home::home_screen.dart::_HomeScreenState" o-- "clean_space::services::authentication_service.dart::AuthenticationService"
+"clean_space::ui::views::home::home_screen.dart::_HomeScreenState" o-- "clean_space::models::user_profile.dart::UserProfile"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "clean_space::ui::views::home::home_screen.dart::_HomeScreenState"
+
+class "clean_space::ui::views::posts::create_post_screen.dart::CreatePostScreen" {
+  +bool isComplaint
+  +Post post
+  +_CreatePostScreenState createState()
+}
+
+"clean_space::ui::views::posts::create_post_screen.dart::CreatePostScreen" o-- "clean_space::models::post.dart::Post"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "clean_space::ui::views::posts::create_post_screen.dart::CreatePostScreen"
+
+class "clean_space::ui::views::posts::create_post_screen.dart::_CreatePostScreenState" {
+  -PostsService _postService
+  -AuthenticationService _authenticationService
+  -TextEditingController _commentAboutPlace
+  -UserProfile _userProfile
+  -File _image
+  -dynamic _selectedCatValue
+  -dynamic _selectedAreaValue
+  -TextEditingController _newCategoryTextEditor
+  +bool isLoading
+  +bool isCatVisible
+  +List<DropdownMenuItem> categoryItems
+  +List<DropdownMenuItem> areaItems
+  +void initState()
+  +dynamic getUserProfile()
+  +void createPost()
+  +void addCategory()
+  +void editPost()
+  +Widget build()
+}
+
+"clean_space::ui::views::posts::create_post_screen.dart::_CreatePostScreenState" o-- "clean_space::services::posts_service.dart::PostsService"
+"clean_space::ui::views::posts::create_post_screen.dart::_CreatePostScreenState" o-- "clean_space::services::authentication_service.dart::AuthenticationService"
+"clean_space::ui::views::posts::create_post_screen.dart::_CreatePostScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"clean_space::ui::views::posts::create_post_screen.dart::_CreatePostScreenState" o-- "clean_space::models::user_profile.dart::UserProfile"
+"clean_space::ui::views::posts::create_post_screen.dart::_CreatePostScreenState" o-- "dart::io::File"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "clean_space::ui::views::posts::create_post_screen.dart::_CreatePostScreenState"
+
+class "clean_space::ui::views::posts::create_post_screen.dart::SearchCategoryDelegate" {
+  +bool isForComplaint
+  +List buildActions()
+  +Widget buildLeading()
+  +Widget buildResults()
+  +Widget buildSuggestions()
+  -Widget _buildList()
+}
+
+"flutter::src::material::search.dart::SearchDelegate<T>" <|-- "clean_space::ui::views::posts::create_post_screen.dart::SearchCategoryDelegate"
+
+class "clean_space::ui::views::posts::create_post_screen.dart::SearchCategoryViewModel2" {
+  -PostsService _postService
+  -bool _showAddNewCategoryTextField
+  +bool isForComplaint
+  +GlobalKey<FormState> addNewCategoryFormKey
+  +TextEditingController addNewCategoryTextEditingController
+  +bool showAddNewCategoryTextField
+  +Stream<List<PostCategory>> stream
+  +void initialize()
+  +dynamic setShowAddNewCategoryTextField()
+  +void addNewCategory()
+}
+
+"clean_space::ui::views::posts::create_post_screen.dart::SearchCategoryViewModel2" o-- "clean_space::services::posts_service.dart::PostsService"
+"clean_space::ui::views::posts::create_post_screen.dart::SearchCategoryViewModel2" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
+"clean_space::ui::views::posts::create_post_screen.dart::SearchCategoryViewModel2" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"clean_space::ui::views::posts::create_post_screen.dart::SearchCategoryViewModel2" o-- "dart::async::Stream<List<PostCategory>>"
+"stacked::src::state_management::base_view_models.dart::StreamViewModel<T>" <|-- "clean_space::ui::views::posts::create_post_screen.dart::SearchCategoryViewModel2"
+
+class "clean_space::ui::views::posts::feed_single_screen.dart::FeedSingleScreen" {
+  +Post post
+  +Widget build()
+}
+
+"clean_space::ui::views::posts::feed_single_screen.dart::FeedSingleScreen" o-- "clean_space::models::post.dart::Post"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "clean_space::ui::views::posts::feed_single_screen.dart::FeedSingleScreen"
+
+class "clean_space::ui::views::posts::rank_test.dart::RankTest" {
+  +_RankTestState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "clean_space::ui::views::posts::rank_test.dart::RankTest"
+
+class "clean_space::ui::views::posts::rank_test.dart::_RankTestState" {
+  -RankService _rankService
+  +void initState()
+  +Future getRankedLocations()
+  +Widget build()
+}
+
+"clean_space::ui::views::posts::rank_test.dart::_RankTestState" o-- "clean_space::services::rank_service.dart::RankService"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "clean_space::ui::views::posts::rank_test.dart::_RankTestState"
+
+class "clean_space::ui::views::profile::edit_profile_view.dart::EditProfileView" {
+  +UserProfile userProfile
+  +_EditProfileViewState createState()
+}
+
+"clean_space::ui::views::profile::edit_profile_view.dart::EditProfileView" o-- "clean_space::models::user_profile.dart::UserProfile"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "clean_space::ui::views::profile::edit_profile_view.dart::EditProfileView"
+
+class "clean_space::ui::views::profile::edit_profile_view.dart::_EditProfileViewState" {
+  -GlobalKey<FormState> _editProfileFormKey
+  -TextEditingController _usernameTextEditingController
+  -TextEditingController _bioTextEditingController
+  -TextEditingController _phoneNumberTextEditingController
+  -PostsService _postsService
+  -UserProfileService _userProfileService
+  +bool isPasswordVisible
+  +bool isLoading
+  -File _image
+  +dynamic imageUrl
+  +void initState()
+  -dynamic _showBottomSheet()
+  +dynamic updateProfile()
+  -Widget _buildProfileAvatar()
+  +Widget build()
+}
+
+"clean_space::ui::views::profile::edit_profile_view.dart::_EditProfileViewState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
+"clean_space::ui::views::profile::edit_profile_view.dart::_EditProfileViewState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"clean_space::ui::views::profile::edit_profile_view.dart::_EditProfileViewState" o-- "clean_space::services::posts_service.dart::PostsService"
+"clean_space::ui::views::profile::edit_profile_view.dart::_EditProfileViewState" o-- "clean_space::services::user_profile_service.dart::UserProfileService"
+"clean_space::ui::views::profile::edit_profile_view.dart::_EditProfileViewState" o-- "dart::io::File"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "clean_space::ui::views::profile::edit_profile_view.dart::_EditProfileViewState"
+
+class "clean_space::ui::views::profile::profile_screen.dart::ProfileScreen" {
+  +UserProfile userProfile
+  +bool isCurrentProfile
+  +_ProfileScreenState createState()
+}
+
+"clean_space::ui::views::profile::profile_screen.dart::ProfileScreen" o-- "clean_space::models::user_profile.dart::UserProfile"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "clean_space::ui::views::profile::profile_screen.dart::ProfileScreen"
+
+class "clean_space::ui::views::profile::profile_screen.dart::_ProfileScreenState" {
+  +TabController controller
+  +int currentTabIndex
+  -PostsService _postsService
+  +void initState()
+  +void dispose()
+  +Widget build()
+  -Widget _buildProfileAvatar()
+}
+
+"clean_space::ui::views::profile::profile_screen.dart::_ProfileScreenState" o-- "flutter::src::material::tab_controller.dart::TabController"
+"clean_space::ui::views::profile::profile_screen.dart::_ProfileScreenState" o-- "clean_space::services::posts_service.dart::PostsService"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "clean_space::ui::views::profile::profile_screen.dart::_ProfileScreenState"
+"flutter::src::widgets::ticker_provider.dart::TickerProviderStateMixin<T>" <|-- "clean_space::ui::views::profile::profile_screen.dart::_ProfileScreenState"
+
+class "clean_space::ui::views::profile::profile_screen.dart::PostGridItem" {
+  +Post post
+  +Widget build()
+}
+
+"clean_space::ui::views::profile::profile_screen.dart::PostGridItem" o-- "clean_space::models::post.dart::Post"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "clean_space::ui::views::profile::profile_screen.dart::PostGridItem"
+
+class "clean_space::ui::views::profile::settings_screen.dart::SettingsScreen" {
+  +UserProfile userProfile
+  +_SettingsScreenState createState()
+}
+
+"clean_space::ui::views::profile::settings_screen.dart::SettingsScreen" o-- "clean_space::models::user_profile.dart::UserProfile"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "clean_space::ui::views::profile::settings_screen.dart::SettingsScreen"
+
+class "clean_space::ui::views::profile::settings_screen.dart::_SettingsScreenState" {
+  -AuthenticationService _authenticationService
+  -TextEditingController _newPasswordTextEdititingController
+  -TextEditingController _confirmNewPasswordTextEdititingController
+  -GlobalKey<FormState> _changePassFormKey
+  +bool isLoading
+  +void changePassword()
+  +Widget build()
+}
+
+"clean_space::ui::views::profile::settings_screen.dart::_SettingsScreenState" o-- "clean_space::services::authentication_service.dart::AuthenticationService"
+"clean_space::ui::views::profile::settings_screen.dart::_SettingsScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"clean_space::ui::views::profile::settings_screen.dart::_SettingsScreenState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "clean_space::ui::views::profile::settings_screen.dart::_SettingsScreenState"
+
+class "clean_space::ui::views::rank::area_feed_view.dart::AreaFeedView" {
+  +Location location
+  +_AreaFeedViewState createState()
+}
+
+"clean_space::ui::views::rank::area_feed_view.dart::AreaFeedView" o-- "clean_space::models::area.dart::Location"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "clean_space::ui::views::rank::area_feed_view.dart::AreaFeedView"
+
+class "clean_space::ui::views::rank::area_feed_view.dart::_AreaFeedViewState" {
+  -PostsService _postsService
+  +Widget build()
+}
+
+"clean_space::ui::views::rank::area_feed_view.dart::_AreaFeedViewState" o-- "clean_space::services::posts_service.dart::PostsService"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "clean_space::ui::views::rank::area_feed_view.dart::_AreaFeedViewState"
+
+class "clean_space::ui::views::rank::rank_view.dart::RankView" {
+  +_RankViewState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "clean_space::ui::views::rank::rank_view.dart::RankView"
+
+class "clean_space::ui::views::rank::rank_view.dart::_RankViewState" {
+  -RankService _rankService
+  +Future getRankedLocations()
+  +Widget build()
+  +Widget showRank()
+}
+
+"clean_space::ui::views::rank::rank_view.dart::_RankViewState" o-- "clean_space::services::rank_service.dart::RankService"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "clean_space::ui::views::rank::rank_view.dart::_RankViewState"
+
+class "clean_space::ui::views::rank::rank_view.dart::StarClipper" {
+  +int numberOfPoints
+  +Path getClip()
+  -num _degToRad()
+  +bool shouldReclip()
+}
+
+"flutter::src::rendering::proxy_box.dart::CustomClipper<T>" <|-- "clean_space::ui::views::rank::rank_view.dart::StarClipper"
+
+class "clean_space::ui::views::rank::rank_widget.dart::RankWidget" {
+  +double offset
+  +Path getClip()
+  +bool shouldReclip()
+}
+
+"flutter::src::rendering::proxy_box.dart::CustomClipper<T>" <|-- "clean_space::ui::views::rank::rank_widget.dart::RankWidget"
+
+class "clean_space::ui::views::startup::on_boarding_screen.dart::OnBoardingScreen" {
+  -PageDecoration _pageDecoration
+  +Widget build()
+}
+
+"clean_space::ui::views::startup::on_boarding_screen.dart::OnBoardingScreen" o-- "introduction_screen::src::model::page_decoration.dart::PageDecoration"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "clean_space::ui::views::startup::on_boarding_screen.dart::OnBoardingScreen"
+
+class "clean_space::ui::views::startup::splash_screen.dart::SplashScreen" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "clean_space::ui::views::startup::splash_screen.dart::SplashScreen"
+
+class "clean_space::ui::views::startup::startup_screen.dart::StartupScreen" {
+  +_StartupScreenState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "clean_space::ui::views::startup::startup_screen.dart::StartupScreen"
+
+class "clean_space::ui::views::startup::startup_screen.dart::_StartupScreenState" {
+  -AuthenticationService _authenticationService
+  +void initState()
+  +Widget build()
+  +void handleStartupLogic()
+}
+
+"clean_space::ui::views::startup::startup_screen.dart::_StartupScreenState" o-- "clean_space::services::authentication_service.dart::AuthenticationService"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "clean_space::ui::views::startup::startup_screen.dart::_StartupScreenState"
+
+class "clean_space::ui::views::widgets::custom_rounded_rectangular_button.dart::CustomRoundedRectangularButton" {
+  +Function onPressed
+  +Color color
+  +double width
+  +double height
+  +Widget child
+  +Widget build()
+}
+
+"clean_space::ui::views::widgets::custom_rounded_rectangular_button.dart::CustomRoundedRectangularButton" o-- "dart::ui::Color"
+"clean_space::ui::views::widgets::custom_rounded_rectangular_button.dart::CustomRoundedRectangularButton" o-- "flutter::src::widgets::framework.dart::Widget"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "clean_space::ui::views::widgets::custom_rounded_rectangular_button.dart::CustomRoundedRectangularButton"
+
+class "clean_space::ui::views::widgets::feed_item.dart::FeedItem" {
+  +Post post
+  +bool isSinglePost
+  +_FeedItemState createState()
+}
+
+"clean_space::ui::views::widgets::feed_item.dart::FeedItem" o-- "clean_space::models::post.dart::Post"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "clean_space::ui::views::widgets::feed_item.dart::FeedItem"
+
+class "clean_space::ui::views::widgets::feed_item.dart::_FeedItemState" {
+  -UserProfileService _userProfileService
+  -PostsService _postsService
+  -AuthenticationService _authenticationService
+  +Widget build()
+  +void choiceAction()
+}
+
+"clean_space::ui::views::widgets::feed_item.dart::_FeedItemState" o-- "clean_space::services::user_profile_service.dart::UserProfileService"
+"clean_space::ui::views::widgets::feed_item.dart::_FeedItemState" o-- "clean_space::services::posts_service.dart::PostsService"
+"clean_space::ui::views::widgets::feed_item.dart::_FeedItemState" o-- "clean_space::services::authentication_service.dart::AuthenticationService"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "clean_space::ui::views::widgets::feed_item.dart::_FeedItemState"
+
+class "clean_space::ui::views::widgets::feed_item.dart::PostLikeWidget" {
+  +Post post
+  +_PostLikeWidgetState createState()
+}
+
+"clean_space::ui::views::widgets::feed_item.dart::PostLikeWidget" o-- "clean_space::models::post.dart::Post"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "clean_space::ui::views::widgets::feed_item.dart::PostLikeWidget"
+
+class "clean_space::ui::views::widgets::feed_item.dart::_PostLikeWidgetState" {
+  +UserProfile currentUserProfile
+  -PostsService _postsService
+  -AuthenticationService _authenticationService
+  +void initState()
+  +void fetchCurrentUserProfile()
+  +Widget build()
+}
+
+"clean_space::ui::views::widgets::feed_item.dart::_PostLikeWidgetState" o-- "clean_space::models::user_profile.dart::UserProfile"
+"clean_space::ui::views::widgets::feed_item.dart::_PostLikeWidgetState" o-- "clean_space::services::posts_service.dart::PostsService"
+"clean_space::ui::views::widgets::feed_item.dart::_PostLikeWidgetState" o-- "clean_space::services::authentication_service.dart::AuthenticationService"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "clean_space::ui::views::widgets::feed_item.dart::_PostLikeWidgetState"
+
+class "clean_space::ui::views::widgets::unfocus_wrapper.dart::UnFocusWrapper" {
+  +Widget child
+  +Widget build()
+}
+
+"clean_space::ui::views::widgets::unfocus_wrapper.dart::UnFocusWrapper" o-- "flutter::src::widgets::framework.dart::Widget"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "clean_space::ui::views::widgets::unfocus_wrapper.dart::UnFocusWrapper"
+
+class "clean_space::utils::constants::assets::image_assets.dart::ImageAssets" {
+  {static} +String images
+  {static} +String dialogImages
+}
+
+class "clean_space::utils::constants::firebase::firebase_storage_buckets.dart::FirebaseStorageBuckets" {
+  {static} +String images
+  {static} +String userProfileAvatars
+  {static} +String postsImages
+}
+
+class "clean_space::utils::constants::firebase::firestore_collections.dart::FireStoreCollections" {
+  {static} +String userProfiles
+  {static} +String posts
+  {static} +String complaints
+  {static} +String postCategories
+}
+
+class "clean_space::utils::enums::dialog_type.dart::DialogType" {
+  +int index
+  {static} +List<DialogType> values
+  {static} +DialogType error
+}
+
+"clean_space::utils::enums::dialog_type.dart::DialogType" o-- "clean_space::utils::enums::dialog_type.dart::DialogType"
+
+
+@enduml

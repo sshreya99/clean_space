@@ -11,6 +11,7 @@ class CustomRoundedRectangularButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
+
       onPressed: onPressed,
       color: color ?? Color(0xff6C63FF),
       minWidth: width ?? double.infinity,

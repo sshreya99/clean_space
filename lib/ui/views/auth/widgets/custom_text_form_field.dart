@@ -28,8 +28,10 @@ class CustomTextFormField extends StatelessWidget {
     this.suffixIcon,
     this.keyboardType,
     this.onChanged,
-    this.maxLength, this.maxLines = 1, this.borderColor = Colors.white, this.borderRadius = const BorderRadius.all(Radius.circular(5)),
-
+    this.maxLength,
+    this.maxLines = 1,
+    this.borderColor = Colors.white,
+    this.borderRadius = const BorderRadius.all(Radius.circular(5)),
   });
 
   @override
@@ -60,9 +62,8 @@ class CustomTextFormField extends StatelessWidget {
         controller: controller,
         readOnly: !enabled,
         keyboardType: keyboardType,
-maxLines: maxLines,
+        maxLines: maxLines,
         decoration: InputDecoration(
-
           counterText: "",
           suffixIcon: suffixIcon,
           prefixIcon: icon,

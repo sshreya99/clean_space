@@ -28,7 +28,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: GoogleFonts.montserrat().fontFamily,
         primaryColor: ThemeColors.primary,
-          accentColor: ThemeColors.primary
+        accentColor: ThemeColors.primary,
+        appBarTheme: AppBarTheme(
+          color: Colors.white,
+          iconTheme: IconThemeData(color: ThemeColors.primary),
+          textTheme:
+              TextTheme(headline6: TextStyle(color: ThemeColors.primary, fontSize: 20)),
+        ),
       ),
       initialRoute: Routes.startupScreen,
       onGenerateRoute: Router().onGenerateRoute,

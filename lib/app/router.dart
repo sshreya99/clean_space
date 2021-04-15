@@ -14,6 +14,7 @@ import 'package:clean_space/ui/views/rank/area_feed_view.dart';
 import 'package:clean_space/ui/views/rank/rank_view.dart';
 import 'package:clean_space/ui/views/startup/on_boarding_screen.dart';
 import 'package:clean_space/ui/views/startup/startup_screen.dart';
+import 'package:clean_space/ui/views/widgets/feed_item.dart';
 
 @MaterialAutoRouter(routes: [
   MaterialRoute(page: StartupScreen, initial: true),
@@ -34,5 +35,6 @@ import 'package:clean_space/ui/views/startup/startup_screen.dart';
   MaterialRoute(page: FeedSingleScreen),
   MaterialRoute(page: RankView),
   MaterialRoute(page: AreaFeedView),
+  MaterialRoute(page: PostLikesPage),
 ])
 class $Router {}

@@ -94,6 +94,7 @@ class AuthenticationService {
 
   Future<void> changePassword(String newPassword) async {
     try {
+
       await currentFirebaseUser.updatePassword(newPassword);
     } on FirebaseAuthException catch (e) {
       print("A firebase auth exception has occured: $e");

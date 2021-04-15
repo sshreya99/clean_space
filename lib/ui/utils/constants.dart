@@ -18,7 +18,7 @@ class Constants{
 
   static const List<String> postCategory = [
     "Greenery",
-    "Dean Road",
+    "Clean Road",
     "RCC Road",
     "Trashing Facility",
     "Add Category"

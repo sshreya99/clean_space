@@ -28,7 +28,6 @@ class _RankViewState extends State<RankView> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         actionsIconTheme: IconThemeData(color: ThemeColors.primary),
-        centerTitle: true,
         elevation: 0,
         title: Text(
           "Ranking",

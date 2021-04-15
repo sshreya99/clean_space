@@ -139,7 +139,7 @@ class PostsService implements PostsServiceBase{
 
   Stream<List<PostCategory>> getPostCategory({bool isForComplaint = false})
   {
-    assert (isForComplaint != null);
+    // assert (isForComplaint = null);
     return _firestoreService.getDataStreamFromQuerySnapShotStream<PostCategory>(
         _firestore.collection(FireStoreCollections.postCategories).snapshots(),
             (snapshot) => PostCategory.fromMap(snapshot.data(), snapshot.id)

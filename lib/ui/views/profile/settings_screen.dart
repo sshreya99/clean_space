@@ -41,83 +41,101 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
     Navigator.pop(context);
   }
-
-  @override
-  Widget build(BuildContext context) {
-    _showBottomSheet() {
-      showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.transparent,
-        builder: (BuildContext bc) {
-          return Container(
-            height: double.infinity,
-            color: Colors.white,
-            child: Center(
-              child: Form(
-                key: _changePassFormKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Center(
-                        child: Text(
-                          "Change Password",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
-                        ),
+  _showBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext bc) {
+        return Container(
+          height: double.infinity,
+          color: Colors.white,
+          child: Center(
+            child: Form(
+              key: _changePassFormKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Text(
+                        "Change Password",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: CustomTextFormField(
-                        controller: _newPasswordTextEdititingController,
-                        validator: (value) =>
-                            AuthValidators.validatePassword(value),
-                        hintText: "Enter new password",
-                        obscureText: true,
-                        keyboardType: TextInputType.visiblePassword,
-                      ),
+                  ),
+                  SizedBox(height: 20,),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: CustomTextFormField(
+                      controller: _newPasswordTextEdititingController,
+                      validator: (value) =>
+                          AuthValidators.validatePassword(value),
+                      hintText: "Enter current Password",
+                      obscureText: true,
+                      keyboardType: TextInputType.visiblePassword,
                     ),
-                    SizedBox(
-                      height: 10,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: CustomTextFormField(
+                      controller: _newPasswordTextEdititingController,
+                      validator: (value) =>
+                          AuthValidators.validatePassword(value),
+                      hintText: "Enter new password",
+                      obscureText: true,
+                      keyboardType: TextInputType.visiblePassword,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: CustomTextFormField(
-                        controller: _confirmNewPasswordTextEdititingController,
-                        validator: (value) =>
-                            AuthValidators.validateConfirmPassword(value,
-                                _newPasswordTextEdititingController.text),
-                        hintText: "Confirm Password",
-                        obscureText: true,
-                        keyboardType: TextInputType.visiblePassword,
-                      ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: CustomTextFormField(
+                      controller: _confirmNewPasswordTextEdititingController,
+                      validator: (value) =>
+                          AuthValidators.validateConfirmPassword(value,
+                              _newPasswordTextEdititingController.text),
+                      hintText: "Confirm Password",
+                      obscureText: true,
+                      keyboardType: TextInputType.visiblePassword,
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Center(
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Center(
                       child: isLoading
                           ? CircularProgressIndicator()
                           : CustomRoundedRectangularButton(
-                              width: 100,
-                              onPressed: changePassword,
-                              color: ThemeColors.primary,
-                              child: Text(
-                                "Submit",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                    )
-                  ],
-                ),
+                        // width: 100,
+                        onPressed: changePassword,
+                        color: ThemeColors.primary,
+                        child: Text(
+                          "Submit",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
-          );
-        },
-      );
-    }
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
 
     return Scaffold(
       appBar: AppBar(
@@ -132,7 +150,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
       backgroundColor: Color(0xffF9F9F9),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: EdgeInsets.only(left: 20, right: 20, top: 50, bottom: 20),
         child: Column(
           children: [
@@ -192,7 +210,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             SizedBox(height: 20),
             CustomRoundedRectangularButton(
-              onPressed: _showBottomSheet,
+              // onPressed: _showBottomSheet,
+              onPressed: () {
+                Navigator.pushNamed(context, Routes.resetNewPasswordScreen);
+              },
               child: Row(
                 children: [
                   Icon(

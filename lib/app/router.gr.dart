@@ -27,6 +27,7 @@ import '../ui/views/rank/area_feed_view.dart';
 import '../ui/views/rank/rank_view.dart';
 import '../ui/views/startup/on_boarding_screen.dart';
 import '../ui/views/startup/startup_screen.dart';
+import '../ui/views/widgets/feed_item.dart';
 
 class Routes {
   static const String startupScreen = '/';
@@ -45,6 +46,7 @@ class Routes {
   static const String feedSingleScreen = '/feed-single-screen';
   static const String rankView = '/rank-view';
   static const String areaFeedView = '/area-feed-view';
+  static const String postLikesPage = '/post-likes-page';
   static const all = <String>{
     startupScreen,
     onBoardingScreen,
@@ -61,6 +63,7 @@ class Routes {
     feedSingleScreen,
     rankView,
     areaFeedView,
+    postLikesPage,
   };
 }
 
@@ -84,6 +87,7 @@ class Router extends RouterBase {
     RouteDef(Routes.feedSingleScreen, page: FeedSingleScreen),
     RouteDef(Routes.rankView, page: RankView),
     RouteDef(Routes.areaFeedView, page: AreaFeedView),
+    RouteDef(Routes.postLikesPage, page: PostLikesPage),
   ];
   @override
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
@@ -200,6 +204,13 @@ class Router extends RouterBase {
         settings: data,
       );
     },
+    PostLikesPage: (data) {
+      final args = data.getArgs<PostLikesPageArguments>(nullOk: false);
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => PostLikesPage(args.posLikes),
+        settings: data,
+      );
+    },
   };
 }
 
@@ -244,4 +255,10 @@ class FeedSingleScreenArguments {
 class AreaFeedViewArguments {
   final Location location;
   AreaFeedViewArguments({this.location});
+}
+
+/// PostLikesPage arguments holder class
+class PostLikesPageArguments {
+  final List<PostLike> posLikes;
+  PostLikesPageArguments({@required this.posLikes});
 }
